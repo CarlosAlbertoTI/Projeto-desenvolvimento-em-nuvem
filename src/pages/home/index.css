@@ -1,0 +1,29 @@
+.container{
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.container .container_novos_patrimonios{
+    width: 90%;
+}
+
+.container .container_novos_patrimonios h3{
+    margin-left: 20px;
+}
+
+.container .container_novos_patrimonios .container_cards{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+@media screen and (max-width: 700px) {
+    .container .container_novos_patrimonios .container_cards{
+       justify-content: center; 
+    }
+}
