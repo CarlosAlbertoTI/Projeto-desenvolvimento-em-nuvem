@@ -8,7 +8,7 @@ const LayoutComponent = ({ children }) => {
     return (
         <Layout>
             <HeaderComponent />
-            <Content>{children}</Content>
+            <Content style={{ height: '100vh' }}>{children}</Content>
         </Layout>
     )
 }

@@ -6,6 +6,14 @@
     justify-content: flex-start;
 }
 
+.container .container_user_info{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    width: 90vw;
+    margin: 20px;
+}
+
 .container .container_novos_patrimonios{
     width: 90%;
 }

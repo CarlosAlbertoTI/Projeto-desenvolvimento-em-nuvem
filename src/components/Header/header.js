@@ -1,17 +1,11 @@
-import { Col, Row, Menu, Drawer, Button } from "antd";
+import { Col, Row, Drawer, Button } from "antd";
 import React, { useState } from "react";
 import { AlignLeftOutlined } from '@ant-design/icons'
-
+import { Link, useLocation } from "react-router-dom";
 import "./style.css";
 
-// const items = [
-//   { label: "Home", key: "1" }, // remember to pass the key prop
-//   { label: "Patrimonios", key: "2" }, // remember to pass the key prop
-//   { label: "Adicionar Patrimonio", key: "3" }, // remember to pass the key prop
-//   { label: "Login", key: "4" }, // which is required
-// ];
-
 const HeaderComponent = () => {
+  const location = useLocation();
   const [open, setOpen] = useState(false);
 
   const showDrawer = () => {
@@ -20,6 +14,7 @@ const HeaderComponent = () => {
 
   return (
     <Row>
+      {console.info(location.pathname)}
       <Col span={24}>
         <div className="header">
           <div className="mobile-btn-menu">
@@ -47,7 +42,15 @@ const HeaderComponent = () => {
             </div>
           </div>
           <div className="menuContent">
-            {/* <Menu items={items} mode="horizontal" /> */}
+            {location.pathname !== '/' && location.pathname !== '/avaliar' && (
+              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/">Sair</Link></Button>
+            )}
+            {location.pathname !== '/home' && location.pathname !== '/avaliar' && (
+              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/avaliar">Avaliar</Link></Button>
+            )}
+            {location.pathname !== '/' && location.pathname !== '/admin' && location.pathname !== '/home' && (
+              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/">Login</Link></Button>
+            )}
           </div>
         </div>
       </Col>

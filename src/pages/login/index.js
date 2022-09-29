@@ -1,20 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LayoutComponent from "../../components/Layout/layout";
-import { Card, Col, Row, Switch, Form, Input, Checkbox, Button } from "antd";
+import { Card, Col, Row, Switch, Form, Input, Button, message } from "antd";
+import { useNavigate } from "react-router-dom";
 import "./index.css";
 
 const Login = () => {
   const [switchControl, setSwitchControl] = useState(false);
-
+  const navigate = useNavigate();
   const handleSwitchControl = () => setSwitchControl((oldValue) => !oldValue);
 
-  const onFinish = (values) => {
-    console.log("Success:", values);
+
+  const loginService = async (value) => {
+    const { email, password } = value
+    if (!email.includes("@")) return message.error('Email não valido!');
+    message.success('Seja bem vindo!')
+    return navigate('/home')
+  }
+
+  const loginServiceFailure = (errorInfo) => {
+    return message.error('Não foi possivel se logar no sistema, por favor tente mais tarde');
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
+  const cadastroService = ({ username, email, password }) => {
+    if (!email.includes("@")) return message.error('Email não valido!');
+    if (password.length < 5) return message.error('Senha precisa ter pelo menos 5 caracteres');
+    message.success('Seu usuário foi criado com sucesso!')
+    return navigate('/home')
+  }
+  const cadastroServiceFailure = () => {
+    return message.error('Não foi possivel se cadastrar no sistema, por favor tente mais tarde');
+  }
+
+  useEffect(() => {
+
+  }, [])
 
   return (
     <LayoutComponent>
@@ -29,7 +48,7 @@ const Login = () => {
             display: "flex",
             justifyContent: "center",
           }}
-          >
+        >
           <Card
             title={!switchControl ? "Cadastra-se" : "Faça seu Login"}
             className="cardContainer"
@@ -55,18 +74,18 @@ const Login = () => {
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
                 initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
+                onFinish={loginService}
+                onFinishFailed={loginServiceFailure}
                 autoComplete="off"
                 style={{
                   marginTop: "40px",
                 }}
               >
                 <Form.Item
-                  label="Username"
-                  name="username"
+                  label="Email"
+                  name="email"
                   rules={[
-                    { required: true, message: "Please input your username!" },
+                    { required: true, message: "Please input your email!" },
                   ]}
                 >
                   <Input />
@@ -81,17 +100,8 @@ const Login = () => {
                 >
                   <Input.Password />
                 </Form.Item>
-
-                <Form.Item
-                  name="remember"
-                  valuePropName="checked"
-                  wrapperCol={{ offset: 8, span: 16 }}
-                >
-                  <Checkbox>Remember me</Checkbox>
-                </Form.Item>
-
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <Button type="primary" htmlType="submit">
+                  <Button type="primary" htmlType="submit" >
                     Entrar
                   </Button>
                 </Form.Item>
@@ -104,9 +114,8 @@ const Login = () => {
                 name="basic"
                 labelCol={{ span: 8 }}
                 wrapperCol={{ span: 16 }}
-                initialValues={{ remember: true }}
-                onFinish={onFinish}
-                onFinishFailed={onFinishFailed}
+                onFinish={cadastroService}
+                onFinishFailed={cadastroServiceFailure}
                 autoComplete="off"
               >
                 <Form.Item
@@ -137,14 +146,6 @@ const Login = () => {
                   ]}
                 >
                   <Input.Password />
-                </Form.Item>
-
-                <Form.Item
-                  name="remember"
-                  valuePropName="checked"
-                  wrapperCol={{ offset: 8, span: 16 }}
-                >
-                  <Checkbox>Remember me</Checkbox>
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>

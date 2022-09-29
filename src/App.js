@@ -2,8 +2,9 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css';
 import Home from "./pages/home";
 import Login from "./pages/login";
-import Patrimonio from "./pages/patrimonio";
+import Validar from "./pages/Validar";
 import Erro from "./pages/404";
+import AdminPage from "./pages/admin";
 
 
 function App() {
@@ -12,8 +13,8 @@ function App() {
       <Routes>
         <Route index element={<Login />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/patrimonio" element={<Patrimonio />} />
-
+        <Route path="/avaliar" element={<Validar />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="*" element={<Erro />} />
 
       </Routes>
