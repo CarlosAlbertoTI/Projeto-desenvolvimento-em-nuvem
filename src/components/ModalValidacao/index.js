@@ -1,16 +1,19 @@
 import { Modal, Card, Image, message } from 'antd';
-import React from 'react';
+import React, { useState } from 'react';
 
 const { Meta } = Card;
 const ModalValidacao = ({ open, handleOk, handleCancel }) => {
-
+    const [loading, setLoading] = useState(false)
 
     const handleOkValidar = async () => {
+        setLoading(true)
         try {
             // request
         } catch (error) {
+            setLoading(false)
             return message.error("Houve um erro para validar esse patrimonio, por favor tente mais tarde!")
         }
+        setLoading(false)
         message.success("Validação feita com sucesso!")
         return handleOk()
 
@@ -32,6 +35,7 @@ const ModalValidacao = ({ open, handleOk, handleCancel }) => {
                 onOk={handleOkValidar}
                 onCancel={handleCancel}
                 okButtonProps={{
+                    loading: loading,
                     disabled: false,
                 }}
                 cancelButtonProps={{

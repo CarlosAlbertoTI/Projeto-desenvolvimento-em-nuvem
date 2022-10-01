@@ -13,12 +13,6 @@ const CardPatrimonio = ({ hasUser = false, info = {} }) => {
     const [showModalEditar, setShowModalEditar] = useState(false)
 
     const handleModalValidacao = () => {
-        setShowModalValidacao((oldValue) => !oldValue)
-    }
-    const handleModalEditar = () => {
-        setShowModalEditar((oldValue) => !oldValue)
-    }
-    const handleDeletePatrimonio = (e) => {
         try {
             // request
         } catch (error) {
@@ -26,6 +20,28 @@ const CardPatrimonio = ({ hasUser = false, info = {} }) => {
             return;
         }
         message.success('Patrimonio deletado com sucesso!');
+        setShowModalValidacao((oldValue) => !oldValue)
+    }
+
+    const handleModalEditar = () => {
+        try {
+            // request
+        } catch (error) {
+            message.error("Houve um erro para editar esse patrimonio, por favor tente mais tarde")
+            return;
+        }
+        message.success('Patrimonio editado com sucesso!');
+        setShowModalEditar((oldValue) => !oldValue)
+    }
+
+    const handleDeletePatrimonio = (e) => {
+        try {
+            // request
+        } catch (error) {
+            message.error("Houve um erro para excluir esse patrimonio, por favor tente mais tarde")
+            return;
+        }
+        return message.success('Patrimonio deletado com sucesso!');
     };
 
     // https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp

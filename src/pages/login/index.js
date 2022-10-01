@@ -5,35 +5,40 @@ import { useNavigate } from "react-router-dom";
 import "./index.css";
 
 const Login = () => {
+  const [loading, setLoading] = useState(false);
   const [switchControl, setSwitchControl] = useState(false);
   const navigate = useNavigate();
   const handleSwitchControl = () => setSwitchControl((oldValue) => !oldValue);
 
 
   const loginService = async (value) => {
+    setLoading(true)
     const { email, password } = value
-    if (!email.includes("@")) return message.error('Email não valido!');
+    if (!email.includes("@")) { setLoading(false); return message.error('Email não valido!'); }
+    setLoading(true);
     message.success('Seja bem vindo!')
     return navigate('/home')
   }
+
 
   const loginServiceFailure = (errorInfo) => {
     return message.error('Não foi possivel se logar no sistema, por favor tente mais tarde');
   };
 
   const cadastroService = ({ username, email, password }) => {
-    if (!email.includes("@")) return message.error('Email não valido!');
-    if (password.length < 5) return message.error('Senha precisa ter pelo menos 5 caracteres');
+    setLoading(true)
+    if (!email.includes("@")) { setLoading(false); return message.error('Email não valido!'); }
+    if (password.length < 5) { setLoading(false); return message.error('Senha precisa ter pelo menos 5 caracteres'); }
     message.success('Seu usuário foi criado com sucesso!')
+    setLoading(false);
     return navigate('/home')
+
+
   }
   const cadastroServiceFailure = () => {
     return message.error('Não foi possivel se cadastrar no sistema, por favor tente mais tarde');
   }
 
-  useEffect(() => {
-
-  }, [])
 
   return (
     <LayoutComponent>
@@ -101,7 +106,7 @@ const Login = () => {
                   <Input.Password />
                 </Form.Item>
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <Button type="primary" htmlType="submit" >
+                  <Button loading={loading} type="primary" htmlType="submit" >
                     Entrar
                   </Button>
                 </Form.Item>
@@ -149,7 +154,7 @@ const Login = () => {
                 </Form.Item>
 
                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                  <Button type="primary" htmlType="submit">
+                  <Button loading={loading} type="primary" htmlType="submit">
                     Cadastrar
                   </Button>
                 </Form.Item>

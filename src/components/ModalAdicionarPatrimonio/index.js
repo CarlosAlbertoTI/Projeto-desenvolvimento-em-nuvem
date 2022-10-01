@@ -13,7 +13,7 @@ const { TextArea } = Input;
 const { Dragger } = Upload;
 
 const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }) => {
-    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
     const props = {
         name: 'file',
         multiple: true,
@@ -40,7 +40,9 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }) => {
 
 
     const handleSuccessForm = (value) => {
-        console.info(value)
+        setLoading(true)
+        handleOk()
+        setLoading(false)
     }
 
 
@@ -52,7 +54,6 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }) => {
                 open={open}
                 onOk={handleOk}
                 ok
-                confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={[
                     <Button key="back" onClick={handleCancel}>
@@ -70,7 +71,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }) => {
                     onFinish={handleSuccessForm}
                 >
                     <Form.Item name="files" valuePropName="fileList" rules={[
-                        { required: true, message: "Campo não pode ficar vazio" },
+                        { required: false, message: "Campo não pode ficar vazio" },
                     ]}>
                         <Dragger {...props}>
                             <p className="ant-upload-drag-icon">
@@ -94,7 +95,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }) => {
                         <TextArea rows={4} />
                     </Form.Item>
                     <Form.Item wrapperCol={{ span: 20 }}>
-                        <Button type="primary" htmlType="submit" >
+                        <Button type="primary" loading={loading} htmlType="submit" >
                             Adicionar
                         </Button>
                     </Form.Item>
