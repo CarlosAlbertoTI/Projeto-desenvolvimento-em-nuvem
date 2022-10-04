@@ -12,7 +12,22 @@ const Validar = () => {
         // const result = await httpService.get("")
         // const patrimoniosParaAvaliar = await httpService.get("")
         return {
-            patrimoniosAvaliar: [{}, {}, {}]
+            patrimoniosAvaliar: [{
+                nome: "Carlos",
+                descricao: "este e um patrimonio",
+                photoUrl:
+                    "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+            }, {
+                nome: "Carlos",
+                descricao: "este e um patrimonio",
+                photoUrl:
+                    "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+            }, {
+                nome: "Carlos",
+                descricao: "este e um patrimonio",
+                photoUrl:
+                    "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+            }]
         }
     }
 
@@ -31,16 +46,11 @@ const Validar = () => {
                     <div className="container_cards">
                         {!loading && (
                             <>
-                                {[1, 2, 4, 5].map((value, index) => (
+                                {listaDePatrimoniosParaAvaliacao.map((value, index) => (
                                     <CardPatrimonio
                                         key={index}
                                         hasUser={false}
-                                        info={{
-                                            nome: "Carlos",
-                                            descricao: "este e um patrimonio",
-                                            photoUrl:
-                                                "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-                                        }}
+                                        info={value}
                                     />
                                 ))}
                             </>

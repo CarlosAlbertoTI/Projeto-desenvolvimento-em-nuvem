@@ -12,7 +12,7 @@ import { InboxOutlined } from '@ant-design/icons';
 const { TextArea } = Input;
 const { Dragger } = Upload;
 
-const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }) => {
+const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
     const [loading, setLoading] = useState(false);
     const props = {
         name: 'file',

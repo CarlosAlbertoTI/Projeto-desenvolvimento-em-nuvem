@@ -7,7 +7,7 @@ import {
     message
 } from 'antd';
 
-const ModalAdicionarUsuario = ({ open, handleOk, handleCancel }) => {
+const ModalAdicionarUsuario = ({ open, handleOk, handleCancel }, key) => {
 
     const handleSucessForm = (values) => {
         const { username, email, password } = values

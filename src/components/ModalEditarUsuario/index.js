@@ -7,7 +7,7 @@ import {
     message
 } from 'antd';
 
-const ModalEditarUsuario = ({ open, handleOk, handleCancel }) => {
+const ModalEditarUsuario = ({ open, handleOk, handleCancel }, key) => {
 
     const handleEditarUsuario = (values) => {
         const { username, email, password, repete_password } = values

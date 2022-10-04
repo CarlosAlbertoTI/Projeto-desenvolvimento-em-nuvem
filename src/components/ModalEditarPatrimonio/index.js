@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Form, Input, DatePicker, Upload } from "antd";
+import { Modal, Form, Input, message, Upload, Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
@@ -14,11 +14,9 @@ const getBase64 = (file) =>
 
 const ModalAlterarDadosPatrimonio = ({
   open,
-  handleOkModal,
   handleCancelModal,
-}) => {
+}, key) => {
   const [loading, setLoading] = useState(false);
-  const [componentDisabled, setComponentDisabled] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
@@ -46,14 +44,17 @@ const ModalAlterarDadosPatrimonio = ({
     );
   };
 
-  const onFormLayoutChange = ({ disabled }) => {
-    setComponentDisabled(disabled);
-  };
-
   const handleSuccess = () => {
-    setLoading(true);
-    handleOkModal();
-    setLoading(false);
+    setLoading(true)
+    try {
+      // request
+    } catch (error) {
+      setLoading(false)
+      return message.error("Houve um erro para editar esse patrimonio, por favor tente mais tarde!")
+    }
+    setLoading(false)
+    message.success("Mudanças salvas com sucesso!")
+    handleCancelModal()
   };
 
   const uploadButton = (
@@ -68,11 +69,12 @@ const ModalAlterarDadosPatrimonio = ({
       <Modal
         title="Dados do novo patrimonio"
         open={open}
-        onOk={handleSuccess}
         okButtonProps={{
-            loading:loading
+          loading: loading
         }}
         onCancel={handleCancelModal}
+        footer={[
+        ]}
       >
         <Form
           layout="vertical"
@@ -81,7 +83,7 @@ const ModalAlterarDadosPatrimonio = ({
             flexDirection: "column",
             justifyContent: "center",
           }}
-          onValuesChange={onFormLayoutChange}
+
         >
           <Form.Item valuePropName="fileList">
             <>
@@ -113,6 +115,9 @@ const ModalAlterarDadosPatrimonio = ({
           </Form.Item>
           <Form.Item label="Descrição">
             <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item label="Descrição">
+            <Button htmlType="submit" loading={loading} onClick={handleSuccess}>Atualizar</Button>
           </Form.Item>
         </Form>
       </Modal>

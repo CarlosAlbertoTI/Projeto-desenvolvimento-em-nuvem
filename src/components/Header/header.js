@@ -1,6 +1,6 @@
-import { Col, Row, Drawer, Button } from "antd";
+import { Col, Row, Drawer, Button, Menu } from "antd";
 import React, { useState } from "react";
-import { AlignLeftOutlined } from '@ant-design/icons'
+import { AlignLeftOutlined, HomeOutlined, LogoutOutlined, CommentOutlined } from '@ant-design/icons'
 import { Link, useLocation } from "react-router-dom";
 import "./style.css";
 
@@ -12,9 +12,36 @@ const HeaderComponent = () => {
     setOpen((oldValue) => !oldValue);
   };
 
+  function getItem(label, key, icon, children, type) {
+    return {
+      key,
+      icon,
+      children,
+      label,
+      type,
+    };
+  }
+
+  const items = [
+    getItem('', '3', <Link to="/avaliar"><CommentOutlined /> Avaliar</Link>),
+    getItem('', '4', <Link to="/"><LogoutOutlined /> Login</Link>,),
+  ];
+
+  const itensAdmin = [
+    getItem('', '2', <Link to="/admin"><CommentOutlined /> Admin</Link>),
+    getItem('', '3', <Link to="/avaliar"><CommentOutlined /> Avaliar</Link>),
+    getItem('', '4', <Link to="/"><LogoutOutlined /> Logout</Link>,),
+  ]
+
+  const itensUser = [
+    getItem('', '1', <Link to="/home"><HomeOutlined /> Home</Link>),
+    getItem('', '3', <Link to="/avaliar"><CommentOutlined /> Avaliar</Link>),
+    getItem('', '4', <Link to="/"><LogoutOutlined /> Logout</Link>,),
+  ]
+
+
   return (
     <Row>
-      {console.info(location.pathname)}
       <Col span={24}>
         <div className="header">
           <div className="mobile-btn-menu">
@@ -27,10 +54,10 @@ const HeaderComponent = () => {
               onClose={showDrawer}
               open={open}
             >
-              <p>Menu</p>
-              <p>Inicio</p>
-              <p>Adicionar Patrimonio</p>
-              <p>Gerenciar Patrimônios</p>
+              <Menu
+                mode="inline"
+                items={location.pathname !== '/' ? (location.pathname !== '/admin' ? itensUser : itensAdmin) : items}
+              />
             </Drawer>
           )}
 

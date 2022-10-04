@@ -1,8 +1,8 @@
-import { Modal, Card, Image, message } from 'antd';
+import { Modal, Card, Image, message, Button } from 'antd';
 import React, { useState } from 'react';
 
 const { Meta } = Card;
-const ModalValidacao = ({ open, handleOk, handleCancel }) => {
+const ModalValidacao = ({ open, handleCancel }, key) => {
     const [loading, setLoading] = useState(false)
 
     const handleOkValidar = async () => {
@@ -15,7 +15,7 @@ const ModalValidacao = ({ open, handleOk, handleCancel }) => {
         }
         setLoading(false)
         message.success("Validação feita com sucesso!")
-        return handleOk()
+        handleCancel()
 
     }
 
@@ -23,6 +23,7 @@ const ModalValidacao = ({ open, handleOk, handleCancel }) => {
     return (
         <>
             <Modal
+                key={key}
                 width={300}
                 style={{
                     display: 'flex',
@@ -30,9 +31,7 @@ const ModalValidacao = ({ open, handleOk, handleCancel }) => {
                     justifyContent: 'center'
                 }}
                 title="Você deseja validar esse patrimonio?"
-                okText="Validar"
                 open={open}
-                onOk={handleOkValidar}
                 onCancel={handleCancel}
                 okButtonProps={{
                     loading: loading,
@@ -41,14 +40,20 @@ const ModalValidacao = ({ open, handleOk, handleCancel }) => {
                 cancelButtonProps={{
                     disabled: false,
                 }}
+                footer={[
+                    <Button loading={loading} onClick={handleOkValidar}>
+                        Validar
+                    </Button>
+                ]}
             >
                 <Card
+                    key={key}
                     hoverable
                     cover={<Image
                         src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp"
                     />}
                 >
-                    <Meta title="Europe Street beat" description="www.instagram.com" />
+                    <Meta key={key} title="Europe Street beat" description="www.instagram.com" />
                 </Card>
             </Modal>
         </>

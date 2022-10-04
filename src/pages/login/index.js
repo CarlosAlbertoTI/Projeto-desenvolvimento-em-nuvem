@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import LayoutComponent from "../../components/Layout/layout";
 import { Card, Col, Row, Switch, Form, Input, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import httpService from '../../service/http'
 import "./index.css";
 
 const Login = () => {
@@ -10,35 +11,75 @@ const Login = () => {
   const navigate = useNavigate();
   const handleSwitchControl = () => setSwitchControl((oldValue) => !oldValue);
 
-
   const loginService = async (value) => {
     setLoading(true)
-    const { email, password } = value
-    if (!email.includes("@")) { setLoading(false); return message.error('Email não valido!'); }
+    const { username, password } = value
     setLoading(true);
-    message.success('Seja bem vindo!')
-    return navigate('/home')
+    let result;
+    try {
+      result = await httpService.get('/user/me', { headers: { "Authorization": "Basic " + btoa(username + ":" + password) } })
+    } catch (error) {
+      setLoading(false)
+      message.error('Email e senha não valido!')
+      return
+    }
+    const { role } = result.data
+    localStorage.setItem('user', result.data);
+    // console.info(result.data.role)
+    switch (role) {
+      case "USER":
+        message.success(`Seja bem vindo !`)
+        navigate('/home')
+        break;
+      case "USER-ROOT":
+        message.success(`Seja bem vindo !`)
+        navigate('/admin')
+        break;
+
+      default:
+        message.error('Erro no login, por favor tente mais tarde')
+        break;
+    }
+    // message.success(`Seja bem vindo !`)
+    // return navigate('/home')
   }
 
-
   const loginServiceFailure = (errorInfo) => {
-    return message.error('Não foi possivel se logar no sistema, por favor tente mais tarde');
+    return message.error('Preencha todos os campos');
   };
 
-  const cadastroService = ({ username, email, password }) => {
+  const cadastroService = async ({ username, email, password }) => {
     setLoading(true)
     if (!email.includes("@")) { setLoading(false); return message.error('Email não valido!'); }
     if (password.length < 5) { setLoading(false); return message.error('Senha precisa ter pelo menos 5 caracteres'); }
-    message.success('Seu usuário foi criado com sucesso!')
-    setLoading(false);
-    return navigate('/home')
-
-
+    const newUser = {
+      "email": email,
+      "identificacao": username,
+      "name": username,
+      "senha": password
+    }
+    let result;
+    try {
+      result = await httpService.post('/user', newUser, {
+        headers: {
+          "accept": '*/*',
+          'Content-Type': 'application/json',
+          "Access-Control-Allow-Origin": "*"
+        }
+      })
+    } catch (error) {
+      setLoading(false);
+      message.error('Não foi possivel se cadastrar no sistema, por favor tente mais tarde')
+      return;
+    }
+    setLoading(false)
+    setSwitchControl((oldValue) => !oldValue)
+    // return navigate('/home')
   }
+
   const cadastroServiceFailure = () => {
-    return message.error('Não foi possivel se cadastrar no sistema, por favor tente mais tarde');
+    return message.error('Preencha todos os campos');
   }
-
 
   return (
     <LayoutComponent>
@@ -87,10 +128,10 @@ const Login = () => {
                 }}
               >
                 <Form.Item
-                  label="Email"
-                  name="email"
+                  label="Username"
+                  name="username"
                   rules={[
-                    { required: true, message: "Please input your email!" },
+                    { required: true, message: "Campo de email não pode ficar vazio!" },
                   ]}
                 >
                   <Input />
@@ -100,7 +141,7 @@ const Login = () => {
                   label="Password"
                   name="password"
                   rules={[
-                    { required: true, message: "Please input your password!" },
+                    { required: true, message: "Campo de senha não pode ficar vazio!" },
                   ]}
                 >
                   <Input.Password />
@@ -127,7 +168,7 @@ const Login = () => {
                   label="Username"
                   name="username"
                   rules={[
-                    { required: true, message: "Please input your username!" },
+                    { required: true, message: "Campo de nome não pode ficar vazio!" },
                   ]}
                 >
                   <Input />
@@ -137,7 +178,7 @@ const Login = () => {
                   label="Email"
                   name="email"
                   rules={[
-                    { required: true, message: "Please input your email!" },
+                    { required: true, message: "Campo de email não pode ficar vazio!" },
                   ]}
                 >
                   <Input />
@@ -147,7 +188,7 @@ const Login = () => {
                   label="Password"
                   name="password"
                   rules={[
-                    { required: true, message: "Please input your password!" },
+                    { required: true, message: "Campo de senha não pode ficar vazio!" },
                   ]}
                 >
                   <Input.Password />

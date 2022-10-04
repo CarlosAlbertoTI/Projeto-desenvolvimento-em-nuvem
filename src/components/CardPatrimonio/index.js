@@ -7,12 +7,12 @@ import ModalAlterarDadosPatrimonio from '../ModalEditarPatrimonio';
 const { Meta } = Card
 
 
-const CardPatrimonio = ({ hasUser = false, info = {} }) => {
+const CardPatrimonio = ({ hasUser = false, info={}},key) => {
     const { nome, descricao, photoUrl } = info
     const [showModalValidacao, setShowModalValidacao] = useState(false)
     const [showModalEditar, setShowModalEditar] = useState(false)
 
-    const handleModalValidacao = () => {
+    const handleDeletePatrimonio = () => {
         try {
             // request
         } catch (error) {
@@ -20,35 +20,13 @@ const CardPatrimonio = ({ hasUser = false, info = {} }) => {
             return;
         }
         message.success('Patrimonio deletado com sucesso!');
-        setShowModalValidacao((oldValue) => !oldValue)
-    }
-
-    const handleModalEditar = () => {
-        try {
-            // request
-        } catch (error) {
-            message.error("Houve um erro para editar esse patrimonio, por favor tente mais tarde")
-            return;
-        }
-        message.success('Patrimonio editado com sucesso!');
-        setShowModalEditar((oldValue) => !oldValue)
-    }
-
-    const handleDeletePatrimonio = (e) => {
-        try {
-            // request
-        } catch (error) {
-            message.error("Houve um erro para excluir esse patrimonio, por favor tente mais tarde")
-            return;
-        }
-        return message.success('Patrimonio deletado com sucesso!');
     };
 
     // https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp
     return (
         <>
-            <ModalValidacao open={showModalValidacao} handleOk={handleModalValidacao} handleCancel={handleModalValidacao} />
-            <ModalAlterarDadosPatrimonio open={showModalEditar} handleOkModal={handleModalEditar} handleCancelModal={handleModalEditar} />
+            <ModalValidacao open={showModalValidacao} handleCancel={() => setShowModalValidacao(false)} />
+            <ModalAlterarDadosPatrimonio open={showModalEditar} handleCancelModal={() => setShowModalEditar(false)} />
             <Card
                 hoverable
                 style={{ width: 240, marginBottom: '30px' }}
@@ -58,21 +36,20 @@ const CardPatrimonio = ({ hasUser = false, info = {} }) => {
 
                 actions={hasUser ? [
                     <CommentOutlined key="comment" onClick={() => {
-                        handleModalValidacao()
+                        setShowModalValidacao(true)
                     }} />,
-                    <EditOutlined key="edit" onClick={() => handleModalEditar()} />,
+                    <EditOutlined key="edit" onClick={() => setShowModalEditar(true)} />,
                     <Popconfirm
                         title="Certeza que deseja excluir esse patrimonio?"
-                        onConfirm={handleDeletePatrimonio}
+                        onConfirm={() => handleDeletePatrimonio()}
                         okText="Deletar"
                         cancelText="Cancelar"
                     >
-                        <DeleteOutlined key="delete" color='red' />,
+                        <DeleteOutlined key="delete" color='red' />
                     </Popconfirm>
                 ] : [
-                    <CommentOutlined key="comment" onClick={() => {
-                        handleModalValidacao()
-                    }} />
+                    <CommentOutlined key="comment" onClick={
+                        () => setShowModalValidacao(true)} />
                 ]}
             >
                 <Meta title={nome} description={descricao} />

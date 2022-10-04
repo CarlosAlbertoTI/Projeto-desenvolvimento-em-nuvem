@@ -1,8 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Button,
-  message,
-} from "antd";
+import { Button, message, Input, Empty } from "antd";
 import Layout from "../../components/Layout/layout";
 import CardPatrimonio from "../../components/CardPatrimonio";
 import ModalAdicionarPatrimonio from "../../components/ModalAdicionarPatrimonio";
@@ -10,24 +7,65 @@ import ModalAdicionarPatrimonio from "../../components/ModalAdicionarPatrimonio"
 import "./index.css";
 import LoadingCardPatrimonio from "../../components/LoadingCardPatrimonio";
 
-
 const Home = () => {
   const [loading, setLoading] = useState(false);
   const [showAddPatrimonioModal, setShowAddPatrimonioModal] = useState(false);
   const [nome, setNome] = useState("Usuário");
+  const [buscaPatrimonio, setBuscaPatrimonio] = useState("");
   const [listaDeMeusPatrimonios, setListaDeMeusPatrimonios] = useState([]);
-  const [listaDePatrimoniosParaAvaliacao, setListaDePatrimoniosParaAvaliacao] =
-    useState([]);
+  const [listaDePatrimoniosParaAvaliacao, setListaDePatrimoniosParaAvaliacao] = useState([]);
 
   const getUserData = () => {
-    // const result = await httpService.get("")
+    // const result = await httpService.get("/")
     // const patrimoniosParaAvaliar = await httpService.get("")
     return {
       nome: "Carlos",
-      meusPatrimonios: [{}, {}, {}],
-      patrimoniosAvaliar: [{}, {}, {}],
+      meusPatrimonios: [
+        {
+          nome: "Carlos",
+          descricao: "este e um patrimonio",
+          photoUrl:
+            "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+        },
+        {
+          nome: "Carlos",
+          descricao: "este e um patrimonio",
+          photoUrl:
+            "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+        },
+        {
+          nome: "Carlos",
+          descricao: "este e um patrimonio",
+          photoUrl:
+            "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+        },
+      ],
+      patrimoniosAvaliar: [{
+        nome: "Carlos",
+        descricao: "este e um patrimonio",
+        photoUrl:
+          "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+      }, {
+        nome: "Carlos",
+        descricao: "este e um patrimonio",
+        photoUrl:
+          "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+      }, {
+        nome: "Carlos",
+        descricao: "este e um patrimonio",
+        photoUrl:
+          "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
+      }],
     };
   };
+
+  const updateData = () => {
+    const { nome, meusPatrimonios, patrimoniosAvaliar } = getUserData();
+    setNome(nome);
+    setListaDeMeusPatrimonios(meusPatrimonios);
+    setListaDePatrimoniosParaAvaliacao(patrimoniosAvaliar);
+    setLoading(false);
+  }
 
   const handleShowAddPatrimonioModal = async (value) => {
     try {
@@ -38,7 +76,7 @@ const Home = () => {
         "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
       );
     }
-    console.info("Adicionando Patrimonio ao usuario")
+    console.info("Adicionando Patrimonio ao usuario");
     // console.info(value)
     setShowAddPatrimonioModal((oldValue) => !oldValue);
   };
@@ -46,12 +84,17 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     // return;
-    const { nome, meusPatrimonios, patrimoniosAvaliar } = getUserData();
-    setNome(nome);
-    setListaDeMeusPatrimonios(meusPatrimonios);
-    setListaDePatrimoniosParaAvaliacao(patrimoniosAvaliar);
-    setLoading(false);
+    updateData()
   }, []);
+
+  useEffect(() => {
+    if (buscaPatrimonio !== "") {
+      const novaListaMeusPatrimonios = listaDeMeusPatrimonios.filter((value) => value.nome.includes(buscaPatrimonio))
+      setListaDeMeusPatrimonios(novaListaMeusPatrimonios)
+    } else {
+      updateData()
+    }
+  }, [buscaPatrimonio]);
 
   return (
     <Layout>
@@ -60,6 +103,12 @@ const Home = () => {
           <h1>
             Seja bem vindo <b>{nome}</b>
           </h1>
+        </div>
+        <div className="container_search_container">
+          <Input
+            placeholder="Busque por algum dos seus patrimonios aqui"
+            onChange={(newValue) => setBuscaPatrimonio(newValue.target.value)}
+          />
         </div>
         <div className="container_user_info">
           {showAddPatrimonioModal && (
@@ -87,23 +136,21 @@ const Home = () => {
           <div className="container_cards">
             {!loading && (
               <>
-                {[1, 2, 3, 4].map((value, index) => (
-                  <CardPatrimonio
-                    key={index}
-                    hasUser={true}
-                    info={{
-                      nome: "Carlos",
-                      descricao: "este e um patrimonio",
-                      photoUrl:
-                        "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-                    }}
-                  />
+                {listaDeMeusPatrimonios.length === 0 && (
+                  <Empty style={{ margin: '20px auto', }} />
+                )}
+                {listaDeMeusPatrimonios.length > 0 && listaDeMeusPatrimonios.map((value, index) => (
+                  <>
+                    <CardPatrimonio
+                      key={index}
+                      hasUser={true}
+                      info={value}
+                    />
+                  </>
                 ))}
               </>
             )}
-            {loading && (
-              <LoadingCardPatrimonio hasUser={true} />
-            )}
+            {loading && <LoadingCardPatrimonio hasUser={true} />}
           </div>
         </div>
         <div className="container_novos_patrimonios">
@@ -111,23 +158,19 @@ const Home = () => {
           <div className="container_cards">
             {!loading && (
               <>
-                {[1, 2, 3, 4].map((value, index) => (
+                {listaDePatrimoniosParaAvaliacao.length === 0 && (
+                  <Empty style={{ margin: '20px auto', }} />
+                )}
+                {listaDePatrimoniosParaAvaliacao.map((value, index) => (
                   <CardPatrimonio
                     key={index}
                     hasUser={false}
-                    info={{
-                      nome: "Carlos",
-                      descricao: "este e um patrimonio",
-                      photoUrl:
-                        "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-                    }}
+                    info={value}
                   />
                 ))}
               </>
             )}
-            {loading && (
-              <LoadingCardPatrimonio />
-            )}
+            {loading && <LoadingCardPatrimonio />}
           </div>
         </div>
       </div>
