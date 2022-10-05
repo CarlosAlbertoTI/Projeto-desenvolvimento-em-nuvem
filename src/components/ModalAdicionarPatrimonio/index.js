@@ -10,26 +10,24 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const formData = new FormData();
 
-  const handleUpload = async () => {
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      formData.append('files[]', file);
-    });
-    setUploading(true); // You can use any AJAX library you like
+  const handleUpload = async (bemId) => {
+    // fileList.forEach((file) => {
+    //   formData.append('files[]', file);
+    // });
+    // setUploading(true); // You can use any AJAX library you like
 
-    try {
-      await httpService.put("/bem/addfiles", formData, {
-        headers: {
-
-        }
-      })
-    } catch (error) {
-      message.error('upload failed.');
-      return;
-    }
-    setFileList([]);
-    message.success('upload successfully.');
+    // try {
+    //   await httpService.put(`/bem/addfiles?id=${bemId}`, formData,)
+    // } catch (error) {
+    //   message.error('upload failed.');
+    //   setUploading(false);
+    //   return;
+    // }
+    // setFileList([]);
+    // message.success('upload successfully.');
+    // setUploading(false);
     // fetch('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
     //   method: 'POST',
     //   body: formData,
@@ -64,8 +62,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
 
   const handleSuccessForm = (value) => {
     setLoading(true);
-    handleUpload();
-    handleOk();
+    handleOk(formData);
     setLoading(false);
   };
 

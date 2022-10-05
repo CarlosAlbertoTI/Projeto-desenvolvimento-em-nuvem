@@ -56,13 +56,24 @@ const Home = () => {
   };
 
   const handleShowAddPatrimonioModal = async (value) => {
+    let handleAddPatrimonioRequest;
     try {
-      await httpService.post("/bem", {
+      handleAddPatrimonioRequest = await httpService.post("/bem", {
         nome: "teste",
         localizacao: "nome",
         codpatrimonio: "string",
         usuarioid: userData.codigoUsuario,
       });
+
+    } catch (error) {
+      message.error(
+        "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
+      );
+      setShowAddPatrimonioModal((oldValue) => !oldValue);
+      return;
+    }
+    try {
+      await httpService.put(`/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`)
     } catch (error) {
       message.error(
         "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
