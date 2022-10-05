@@ -5,67 +5,62 @@ import Layout from "../../components/Layout/layout";
 import "./index.css";
 import ModalAdicionarUsuario from "../../components/ModalAdicionarUsuario";
 import ModalEditarUsuario from "../../components/ModalEditarUsuario";
-const count = 3;
-const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
+import httpService from "../../service/http";
 
 const AdminPage = () => {
 
   const [nome, setNome] = useState("Usuário");
   const [usuarios, setUsuario] = useState([]);
   const [initLoading, setInitLoading] = useState(true);
+  const [chooseEditUser, setChooseEditUser] = useState({});
   const [showAdicionarUsuarioModal, setShowAdicionarUsuarioModal] = useState(false);
   const [showEditarUsuarioModal, setShowEditarUsuarioModal] = useState(false);
-  const [data, setData] = useState([]);
-  const [list, setList] = useState([]);
+  const userData = JSON.parse(localStorage.getItem("user"));
 
 
+  const getUserData = async () => {
+    let userList;
+    try {
+      userList = await httpService.get("/user", {
+        headers: { Authorization: `Basic ${btoa("rootnovo:root123")}` },
+      })
+    } catch (error) {
+      message.error("Erro ao carregar informações do usuário, por favor tente mais tarde!");
+      return;
+    }
 
-  const getUserData = () => {
-    // const result = await httpService.get("")
-    // const listaUsuario = await httpService.get("")
+    const filterUserList = userList.data.filter((user) => user.role !== "ROOT")
     return {
-      nome: "Carlos",
-      usuarios: [
-        {}, {}, {}
-      ],
+      nome: userData.nome,
+      usuarios: filterUserList
     }
   }
 
-  const handleDeleteUsuario = (e) => {
+  const handleDeleteUsuario = async (userId) => {
     try {
-      // request
+      await httpService.delete(`/user/${userId}`)
     } catch (error) {
       message.error("Houve um erro ao tentar deletar este usuário, por favor tente mais tarde!")
       return;
     }
-    console.log(e);
     message.success("Usuário deletado com sucesso!");
+    updateUserList()
   };
 
-  useEffect(() => {
-    fetch(fakeDataUrl)
-      .then((res) => res.json())
-      .then((res) => {
-        setInitLoading(false);
-        setData(res.results);
-        setList(res.results);
-      });
-  }, []);
-
-  useEffect(() => {
-    const { nome, usuarios, } = getUserData()
+  const updateUserList = async () => {
+    setInitLoading(true)
+    const { nome, usuarios } = await getUserData()
     setNome(nome)
     setUsuario(usuarios)
-  }, [])
+    setInitLoading(false)
+  }
 
-  // const handleAdicionarUserModal = () => {
-  //   setShowAdicionarUsuarioModal((oldValue) => oldValue);
-  // };
+  useEffect(() => {
+    updateUserList()
+  }, [])
 
   return (
     <Layout>
-      {/* {console.info(data)}
-      {console.info(list)} */}
       <div className="container">
         <div className="container_user_info">
           <h1>
@@ -75,6 +70,7 @@ const AdminPage = () => {
             {showEditarUsuarioModal && (
               <ModalEditarUsuario
                 open={showEditarUsuarioModal}
+                info={chooseEditUser}
                 handleOk={() => setShowEditarUsuarioModal(false)}
                 handleCancel={() => setShowEditarUsuarioModal(false)}
               />
@@ -82,7 +78,7 @@ const AdminPage = () => {
             {showAdicionarUsuarioModal && (
               <ModalAdicionarUsuario
                 open={showAdicionarUsuarioModal}
-                handleOk={() => setShowAdicionarUsuarioModal(false)}
+                handleOk={() => { setShowAdicionarUsuarioModal(false); updateUserList() }}
                 handleCancel={() => setShowAdicionarUsuarioModal(false)}
               />
             )}
@@ -102,7 +98,7 @@ const AdminPage = () => {
             <List
               loading={initLoading}
               itemLayout="horizontal"
-              dataSource={list}
+              dataSource={usuarios}
               renderItem={(item) => (
                 <List.Item
                   style={{
@@ -110,15 +106,17 @@ const AdminPage = () => {
                     backgroundColor: "#BF6900",
                   }}
                   actions={[
+
                     <EditOutlined
                       style={{ color: "white" }}
                       key="edit"
-                      onClick={() => { setShowEditarUsuarioModal(true) }}
+                      onClick={() => { setChooseEditUser(item); setShowEditarUsuarioModal(true) }}
                       width="20"
                     />,
+
                     <Popconfirm
                       title="Certeza que deseja excluir esse usuário?"
-                      onConfirm={handleDeleteUsuario}
+                      onConfirm={() => handleDeleteUsuario(item.codigoUsuario)}
                       okText="Deletar"
                       cancelText="Cancelar"
                     >
@@ -132,7 +130,7 @@ const AdminPage = () => {
                 >
                   <Skeleton avatar title={false} loading={item.loading} active>
                     <List.Item.Meta
-                      title={<p style={{ color: "white" }}>{item.name.last}</p>}
+                      title={<p style={{ color: "white" }}>{item.nome}</p>}
                       description={<p style={{ color: "white" }}>{item.email}</p>}
                     />
                   </Skeleton>

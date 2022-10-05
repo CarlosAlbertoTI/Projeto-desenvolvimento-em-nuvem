@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Form, Input, message, Upload, Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
-
+import httpService from "../../service/http";
 const { TextArea } = Input;
 
 const getBase64 = (file) =>
@@ -15,6 +15,8 @@ const getBase64 = (file) =>
 const ModalAlterarDadosPatrimonio = ({
   open,
   handleCancelModal,
+  info,
+  handleAction
 }, key) => {
   const [loading, setLoading] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -44,16 +46,25 @@ const ModalAlterarDadosPatrimonio = ({
     );
   };
 
-  const handleSuccess = () => {
+  const handleSuccess = async (value) => {
     setLoading(true)
+    // console.info(value)
+    // console.info(info)
+    // console.info({
+    //   "name": value.name, "localizacao": value.localizacao, "codbem": info.idBem
+    // })
+    // return;
     try {
-      // request
+      await httpService.put("/bem", {
+        "nome": value.name, "localizacao": value.localizacao, "codbem": info.idBem
+      })
     } catch (error) {
       setLoading(false)
       return message.error("Houve um erro para editar esse patrimonio, por favor tente mais tarde!")
     }
     setLoading(false)
     message.success("Mudanças salvas com sucesso!")
+    handleAction()
     handleCancelModal()
   };
 
@@ -83,7 +94,8 @@ const ModalAlterarDadosPatrimonio = ({
             flexDirection: "column",
             justifyContent: "center",
           }}
-
+          initialValues={{ ...info }}
+          onFinish={handleSuccess}
         >
           <Form.Item valuePropName="fileList">
             <>
@@ -110,14 +122,14 @@ const ModalAlterarDadosPatrimonio = ({
               </Modal>
             </>
           </Form.Item>
-          <Form.Item label="Nome do patrimonio">
+          <Form.Item name="name" label="Nome do patrimonio">
             <Input />
           </Form.Item>
-          <Form.Item label="Descrição">
+          <Form.Item name="localizacao" label="Descrição">
             <TextArea rows={4} />
           </Form.Item>
-          <Form.Item label="Descrição">
-            <Button htmlType="submit" loading={loading} onClick={handleSuccess}>Atualizar</Button>
+          <Form.Item>
+            <Button htmlType="submit" loading={loading} >Atualizar</Button>
           </Form.Item>
         </Form>
       </Modal>

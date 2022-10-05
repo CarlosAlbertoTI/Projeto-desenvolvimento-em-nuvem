@@ -76,7 +76,7 @@ const HeaderComponent = () => {
               <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/avaliar">Avaliar</Link></Button>
             )}
             {location.pathname !== '/' && location.pathname !== '/admin' && location.pathname !== '/home' && (
-              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/">Login</Link></Button>
+              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary" onClick={() => { localStorage.clear() }}><Link to="/">Login</Link></Button>
             )}
           </div>
         </div>

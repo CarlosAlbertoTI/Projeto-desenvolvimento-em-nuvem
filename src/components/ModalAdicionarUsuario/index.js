@@ -6,26 +6,50 @@ import {
     Input,
     message
 } from 'antd';
+import httpService from "../../service/http";
+
 
 const ModalAdicionarUsuario = ({ open, handleOk, handleCancel }, key) => {
+    const [loading, setLoading] = useState(false)
+    const [confirmLoading, setConfirmLoading] = useState(false);
 
-    const handleSucessForm = (values) => {
-        const { username, email, password } = values
-        if (!email.includes("@")) return message.error('Email não valido!');
-        if (password.length < 5) return message.error('Senha precisa ter pelo menos 5 caracteres');
-        try {
-            //request 
-        } catch (error) {
-            return message.error("Erro ao adicionar um usuario, por favor tente mais tarde!")
+    const handleSucessForm = async (values) => {
+        const { username, password, email } = values
+        setLoading(true);
+
+        if (!email.includes("@")) {
+            setLoading(false);
+            return message.error("Email não valido!");
         }
-        message.success("Usuário criado com sucesso!")
-        // console.log("Success:", values);
+        if (password.length < 5) {
+            setLoading(false);
+            return message.error("Senha precisa ter pelo menos 5 caracteres");
+        }
+        const newUser = {
+            email: email,
+            identificacao: username,
+            name: username,
+            senha: password,
+        };
+        let result;
+        try {
+            result = await httpService.post("/user", newUser, {
+                headers: {
+                    accept: "*/*",
+                    "Content-Type": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                },
+            });
+        } catch (error) {
+            setLoading(false);
+            message.error(
+                "Não foi possivel se cadastrar no sistema, por favor tente mais tarde"
+            );
+            return;
+        }
+        setLoading(false);
         handleOk()
     };
-
-
-
-    const [confirmLoading, setConfirmLoading] = useState(false);
 
     return (
         <>
@@ -74,7 +98,7 @@ const ModalAdicionarUsuario = ({ open, handleOk, handleCancel }, key) => {
                         <Input.Password />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
+                        <Button loading={loading} type="primary" htmlType="submit">
                             Cadastrar
                         </Button>
                     </Form.Item>

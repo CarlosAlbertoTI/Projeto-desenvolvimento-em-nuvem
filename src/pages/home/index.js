@@ -3,7 +3,7 @@ import { Button, message, Input, Empty } from "antd";
 import Layout from "../../components/Layout/layout";
 import CardPatrimonio from "../../components/CardPatrimonio";
 import ModalAdicionarPatrimonio from "../../components/ModalAdicionarPatrimonio";
-// import httpService from "../../service/http";
+import httpService from "../../service/http";
 import "./index.css";
 import LoadingCardPatrimonio from "../../components/LoadingCardPatrimonio";
 
@@ -13,86 +13,78 @@ const Home = () => {
   const [nome, setNome] = useState("Usuário");
   const [buscaPatrimonio, setBuscaPatrimonio] = useState("");
   const [listaDeMeusPatrimonios, setListaDeMeusPatrimonios] = useState([]);
-  const [listaDePatrimoniosParaAvaliacao, setListaDePatrimoniosParaAvaliacao] = useState([]);
+  const [listaDePatrimoniosParaAvaliacao, setListaDePatrimoniosParaAvaliacao] =
+    useState([]);
+  const userData = JSON.parse(localStorage.getItem("user"));
 
-  const getUserData = () => {
-    // const result = await httpService.get("/")
-    // const patrimoniosParaAvaliar = await httpService.get("")
+  const getUserData = async () => {
+    // console.info(userData);
+    const meusPatrimoniosRequest = await httpService.get(
+      "/bem?nome=" + userData.nome
+    );
+    const patrimoniosParaAvaliarRequest = await httpService.get("/bem", {
+      headers: {
+        Authorization: "Basic " + btoa("superuser:superuser"),
+      },
+    });
+    const filterPatrimoniosAvaliarRequest = patrimoniosParaAvaliarRequest.data.filter((patrimonio) => meusPatrimoniosRequest.data.includes(patrimonio) !== false)
     return {
-      nome: "Carlos",
-      meusPatrimonios: [
-        {
-          nome: "Carlos",
-          descricao: "este e um patrimonio",
-          photoUrl:
-            "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-        },
-        {
-          nome: "Carlos",
-          descricao: "este e um patrimonio",
-          photoUrl:
-            "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-        },
-        {
-          nome: "Carlos",
-          descricao: "este e um patrimonio",
-          photoUrl:
-            "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-        },
-      ],
-      patrimoniosAvaliar: [{
-        nome: "Carlos",
-        descricao: "este e um patrimonio",
-        photoUrl:
-          "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-      }, {
-        nome: "Carlos",
-        descricao: "este e um patrimonio",
-        photoUrl:
-          "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-      }, {
-        nome: "Carlos",
-        descricao: "este e um patrimonio",
-        photoUrl:
-          "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-      }],
+      nome: userData.nome,
+      meusPatrimonios: meusPatrimoniosRequest.data,
+      patrimoniosAvaliar: filterPatrimoniosAvaliarRequest
     };
   };
 
-  const updateData = () => {
-    const { nome, meusPatrimonios, patrimoniosAvaliar } = getUserData();
+  const updateData = async () => {
+    const { nome, meusPatrimonios, patrimoniosAvaliar } = await getUserData();
+    console.info("MEUS avaliar");
+    console.info(patrimoniosAvaliar);
     setNome(nome);
     setListaDeMeusPatrimonios(meusPatrimonios);
     setListaDePatrimoniosParaAvaliacao(patrimoniosAvaliar);
     setLoading(false);
-  }
+  };
 
   const handleShowAddPatrimonioModal = async (value) => {
     try {
-      // const result = await httpService.post("",value)
-      // throw Error("sdff")
+      await httpService.post("/bem", {
+        nome: "teste",
+        localizacao: "nome",
+        codpatrimonio: "string",
+        usuarioid: userData.codigoUsuario,
+      });
     } catch (error) {
-      return message.error(
+      message.error(
         "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
       );
+      setShowAddPatrimonioModal((oldValue) => !oldValue);
+      return;
     }
-    console.info("Adicionando Patrimonio ao usuario");
+    // console.info("Adicionando Patrimonio ao usuario");
     // console.info(value)
+    updateData()
     setShowAddPatrimonioModal((oldValue) => !oldValue);
   };
 
   useEffect(() => {
     setLoading(true);
     // return;
-    updateData()
+    updateData();
+
   }, []);
 
   useEffect(() => {
     if (buscaPatrimonio !== "") {
-      const novaListaMeusPatrimonios = listaDeMeusPatrimonios.filter((value) => value.nome.includes(buscaPatrimonio))
-      setListaDeMeusPatrimonios(novaListaMeusPatrimonios)
+      setLoading(true)
+      const novaListaMeusPatrimonios = listaDeMeusPatrimonios.filter((value) =>
+        value.name.includes(buscaPatrimonio)
+      );
+      setListaDeMeusPatrimonios(novaListaMeusPatrimonios);
+      setLoading(false)
     } else {
-      updateData()
+      setLoading(true)
+      updateData();
+      setLoading(false)
     }
   }, [buscaPatrimonio]);
 
@@ -114,7 +106,7 @@ const Home = () => {
           {showAddPatrimonioModal && (
             <ModalAdicionarPatrimonio
               open={showAddPatrimonioModal}
-              handleOk={() => setShowAddPatrimonioModal(false)}
+              handleOk={handleShowAddPatrimonioModal}
               handleCancel={() => setShowAddPatrimonioModal(false)}
             />
           )}
@@ -125,7 +117,7 @@ const Home = () => {
               backgroundColor: "#BF6900",
               color: "white",
             }}
-            onClick={handleShowAddPatrimonioModal}
+            onClick={() => setShowAddPatrimonioModal(true)}
             type="primary"
           >
             Adicionar Patrimonio
@@ -137,17 +129,14 @@ const Home = () => {
             {!loading && (
               <>
                 {listaDeMeusPatrimonios.length === 0 && (
-                  <Empty style={{ margin: '20px auto', }} />
+                  <Empty style={{ margin: "20px auto" }} />
                 )}
-                {listaDeMeusPatrimonios.length > 0 && listaDeMeusPatrimonios.map((value, index) => (
-                  <>
-                    <CardPatrimonio
-                      key={index}
-                      hasUser={true}
-                      info={value}
-                    />
-                  </>
-                ))}
+                {listaDeMeusPatrimonios.length > 0 &&
+                  listaDeMeusPatrimonios.map((value, index) => (
+                    <>
+                      <CardPatrimonio key={index} hasUser={true} info={value} handleAction={updateData} />
+                    </>
+                  ))}
               </>
             )}
             {loading && <LoadingCardPatrimonio hasUser={true} />}
@@ -159,15 +148,12 @@ const Home = () => {
             {!loading && (
               <>
                 {listaDePatrimoniosParaAvaliacao.length === 0 && (
-                  <Empty style={{ margin: '20px auto', }} />
+                  <Empty style={{ margin: "20px auto" }} />
                 )}
-                {listaDePatrimoniosParaAvaliacao.map((value, index) => (
-                  <CardPatrimonio
-                    key={index}
-                    hasUser={false}
-                    info={value}
-                  />
-                ))}
+                {listaDePatrimoniosParaAvaliacao.length > 0 &&
+                  listaDePatrimoniosParaAvaliacao.map((value, index) => (
+                    <CardPatrimonio key={index} hasUser={false} info={value} />
+                  ))}
               </>
             )}
             {loading && <LoadingCardPatrimonio />}

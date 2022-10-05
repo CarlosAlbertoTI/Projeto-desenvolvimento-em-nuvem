@@ -6,27 +6,26 @@ import {
     Input,
     message
 } from 'antd';
+import httpService from "../../service/http";
 
-const ModalEditarUsuario = ({ open, handleOk, handleCancel }, key) => {
+const ModalEditarUsuario = ({ open, handleOk, handleCancel, info }, key) => {
+    const [loading, setLoading] = useState(false);
 
-    const handleEditarUsuario = (values) => {
+    const handleEditarUsuario = async (values) => {
         const { username, email, password, repete_password } = values
         if (!email.includes("@")) return message.error('Email não valido!');
         if (!(password === repete_password)) return message.error('Senhas não estão iguais');
         if (password.length < 5) return message.error('Senha precisa ter pelo menos 5 caracteres');
+
         try {
-            // request
+            await httpService.put("/user", { name: username, email, senha: password, id: info.codigoUsuario, identificacao: username })
         } catch (error) {
             message.error("Houve um erro ao tentar editar este usuário, por favor tente novamente!")
             return;
         }
         message.success("Usuário editado com sucesso")
-        // console.log("Success:", values);
         handleOk()
     };
-
-
-    const [confirmLoading, setConfirmLoading] = useState(false);
 
     return (
         <>
@@ -34,16 +33,16 @@ const ModalEditarUsuario = ({ open, handleOk, handleCancel }, key) => {
                 title="Edite dados deste usuário"
                 open={open}
                 onOk={handleOk}
-                confirmLoading={confirmLoading}
                 onCancel={handleCancel}
                 footer={[]}
             >
+
                 <Form
                     className="formContainer"
                     name="basic"
                     labelCol={{ span: 8 }}
                     wrapperCol={{ span: 16 }}
-                    initialValues={{ remember: true }}
+                    initialValues={{ ...info, username: info.nome }}
                     onFinish={handleEditarUsuario}
                     autoComplete="off"
                 >
@@ -54,7 +53,7 @@ const ModalEditarUsuario = ({ open, handleOk, handleCancel }, key) => {
                             { required: true, message: "Campo não pode ser nulo!" },
                         ]}
                     >
-                        <Input />
+                        <Input defaultValue={info.name} />
                     </Form.Item>
                     <Form.Item
                         label="Email"
@@ -63,7 +62,7 @@ const ModalEditarUsuario = ({ open, handleOk, handleCancel }, key) => {
                             { required: true, message: "Campo não pode ser nulo!" },
                         ]}
                     >
-                        <Input />
+                        <Input value={info.email} />
                     </Form.Item>
                     <Form.Item
                         label="Senha"
@@ -72,7 +71,7 @@ const ModalEditarUsuario = ({ open, handleOk, handleCancel }, key) => {
                             { required: true, message: "Campo não pode ser nulo!" },
                         ]}
                     >
-                        <Input.Password />
+                        <Input.Password value={info.password} />
                     </Form.Item>
                     <Form.Item
                         label="Repita a senha"
@@ -81,11 +80,11 @@ const ModalEditarUsuario = ({ open, handleOk, handleCancel }, key) => {
                             { required: true, message: "Campo não pode ser nulo!" },
                         ]}
                     >
-                        <Input.Password />
+                        <Input.Password value={info.password} />
                     </Form.Item>
                     <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                        <Button type="primary" htmlType="submit">
-                            Cadastrar
+                        <Button type="primary" htmlType="submit" loading={loading}>
+                            Atualizar Dados
                         </Button>
                     </Form.Item>
                 </Form>

@@ -1,24 +1,30 @@
 import { Modal, Card, Image, message, Button } from 'antd';
 import React, { useState } from 'react';
+import httpService from "../../service/http";
 
 const { Meta } = Card;
-const ModalValidacao = ({ open, handleCancel }, key) => {
+const ModalValidacao = ({ open, handleAction, handleCancel, info }, key) => {
     const [loading, setLoading] = useState(false)
 
     const handleOkValidar = async () => {
         setLoading(true)
         try {
-            // request
+            await httpService.post("/validation", {
+                "aprovacao": true,
+                "comentarios": "string",
+                "idBem": info.idBem
+            })
         } catch (error) {
             setLoading(false)
-            return message.error("Houve um erro para validar esse patrimonio, por favor tente mais tarde!")
+            message.error("Houve um erro para validar esse patrimonio, por favor tente mais tarde!")
+            handleCancel();
+            return
         }
         setLoading(false)
         message.success("Validação feita com sucesso!")
+        handleAction()
         handleCancel()
-
     }
-
 
     return (
         <>
@@ -50,10 +56,10 @@ const ModalValidacao = ({ open, handleCancel }, key) => {
                     key={key}
                     hoverable
                     cover={<Image
-                        src="https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp"
+                        src={info.bemUrl}
                     />}
                 >
-                    <Meta key={key} title="Europe Street beat" description="www.instagram.com" />
+                    <Meta key={key} title={info.name} description={info.localization} />
                 </Card>
             </Modal>
         </>

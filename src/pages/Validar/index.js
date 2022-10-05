@@ -2,41 +2,39 @@ import { useState, useEffect } from 'react'
 import Layout from "../../components/Layout/layout";
 import CardPatrimonio from "../../components/CardPatrimonio";
 import LoadingCardPatrimonio from "../../components/LoadingCardPatrimonio";
+import httpService from "../../service/http";
 import "./index.css";
 
 const Validar = () => {
     const [loading, setLoading] = useState(false);
     const [listaDePatrimoniosParaAvaliacao, setListaDePatrimoniosParaAvaliacao] = useState([]);
 
-    const getUserDataAndPatrimonios = () => {
-        // const result = await httpService.get("")
-        // const patrimoniosParaAvaliar = await httpService.get("")
+    const getUserData = async () => {
+
+        const patrimoniosParaAvaliarRequest = await httpService.get("/bem", {
+            headers: {
+                Authorization: "Basic " + btoa("superuser:superuser"),
+            },
+        });
+
         return {
-            patrimoniosAvaliar: [{
-                nome: "Carlos",
-                descricao: "este e um patrimonio",
-                photoUrl:
-                    "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-            }, {
-                nome: "Carlos",
-                descricao: "este e um patrimonio",
-                photoUrl:
-                    "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-            }, {
-                nome: "Carlos",
-                descricao: "este e um patrimonio",
-                photoUrl:
-                    "https://gw.alipayobjects.com/zos/antfincdn/LlvErxo8H9/photo-1503185912284-5271ff81b9a8.webp",
-            }]
-        }
-    }
+            patrimoniosAvaliar: patrimoniosParaAvaliarRequest.data
+        };
+    };
+
+    const updateData = async () => {
+        const { patrimoniosAvaliar } = await getUserData();
+        // console.info(patrimoniosAvaliar);
+        setListaDePatrimoniosParaAvaliacao(patrimoniosAvaliar);
+        setLoading(false);
+    };
 
     useEffect(() => {
-        setLoading(true)
-        const { patrimoniosAvaliar } = getUserDataAndPatrimonios()
-        setListaDePatrimoniosParaAvaliacao(patrimoniosAvaliar)
-        setLoading(false)
-    }, [])
+        setLoading(true);
+        // return;
+        updateData();
+
+    }, []);
 
     return (
         <Layout>

@@ -1,108 +1,107 @@
-import React, { useState } from 'react';
-import {
-    Button,
-    Modal,
-    Form,
-    Input,
-    Upload,
-    message
-} from 'antd';
-import { InboxOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import { Button, Modal, Form, Input, Upload, message } from "antd";
+import { InboxOutlined } from "@ant-design/icons";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
 
 const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
-    const [loading, setLoading] = useState(false);
-    const props = {
-        name: 'file',
-        multiple: true,
-        action: '',
+  const [loading, setLoading] = useState(false);
+  const props = {
+    name: "file",
+    multiple: false,
+    action: "http://54.145.67.182:8080/bem/addfiles",
+    // customRequest={() {}}
 
-        onChange(info) {
-            const { status } = info.file;
+    onChange(info) {
+      const { status } = info.file;
 
-            if (status !== 'uploading') {
-                console.log(info.file, info.fileList);
-            }
+      if (status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
 
-            if (status === 'done') {
-                message.success(`${info.file.name} file uploaded successfully.`);
-            } else if (status === 'error') {
-                message.error(`${info.file.name} file upload failed.`);
-            }
-        },
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
 
-        onDrop(e) {
-            console.log('Dropped files', e.dataTransfer.files);
-        },
-    };
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
 
+  const handleSuccessForm = (value) => {
+    setLoading(true);
+    handleOk();
+    setLoading(false);
+  };
 
-    const handleSuccessForm = (value) => {
-        setLoading(true)
-        handleOk()
-        setLoading(false)
-    }
-
-
-
-    return (
-        <>
-            <Modal
-                title="Dados do novo patrimonio"
-                open={open}
-                onOk={handleOk}
-                ok
-                onCancel={handleCancel}
-                footer={[
-                    <Button key="back" onClick={handleCancel}>
-                        Return
-                    </Button>
-                ]}
-            >
-                <Form
-                    layout="vertical"
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center'
-                    }}
-                    onFinish={handleSuccessForm}
-                >
-                    <Form.Item name="files" valuePropName="fileList" rules={[
-                        { required: false, message: "Campo não pode ficar vazio" },
-                    ]}>
-                        <Dragger {...props}>
-                            <p className="ant-upload-drag-icon">
-                                <InboxOutlined />
-                            </p>
-                            <p className="ant-upload-text">Click or drag file to this area to upload</p>
-                            <p className="ant-upload-hint">
-                                Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-                                band files
-                            </p>
-                        </Dragger>
-                    </Form.Item>
-                    <Form.Item name="nome" label="Nome do patrimonio" rules={[
-                        { required: true, message: "Campo não pode ficar vazio" },
-                    ]}>
-                        <Input />
-                    </Form.Item>
-                    <Form.Item name="descricao" label="Descrição" rules={[
-                        { required: true, message: "Campo não pode ficar vazio" },
-                    ]}>
-                        <TextArea rows={4} />
-                    </Form.Item>
-                    <Form.Item wrapperCol={{ span: 20 }}>
-                        <Button type="primary" loading={loading} htmlType="submit" >
-                            Adicionar
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </>
-    );
+  return (
+    <>
+      <Modal
+        title="Dados do novo patrimonio"
+        open={open}
+        onOk={handleOk}
+        ok
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Return
+          </Button>,
+        ]}
+      >
+        <Form
+          layout="vertical"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+          }}
+          onFinish={() => handleSuccessForm()}
+        >
+          <Form.Item
+            name="files"
+            valuePropName="fileList"
+            rules={[{ required: false, message: "Campo não pode ficar vazio" }]}
+          >
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Support for a single or bulk upload. Strictly prohibit from
+                uploading company data or other band files
+              </p>
+            </Dragger>
+          </Form.Item>
+          <Form.Item
+            name="nome"
+            label="Nome do patrimonio"
+            rules={[{ required: true, message: "Campo não pode ficar vazio" }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="descricao"
+            label="Descrição"
+            rules={[{ required: true, message: "Campo não pode ficar vazio" }]}
+          >
+            <TextArea rows={4} />
+          </Form.Item>
+          <Form.Item wrapperCol={{ span: 20 }}>
+            <Button type="primary" loading={loading} htmlType="submit">
+              Adicionar
+            </Button>
+          </Form.Item>
+        </Form>
+      </Modal>
+    </>
+  );
 };
 
 export default ModalAdicionarPatrimonio;
