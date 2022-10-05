@@ -22,23 +22,17 @@ const HeaderComponent = () => {
     };
   }
 
-  const items = [
-    getItem('', '3', <Link to="/avaliar"><CommentOutlined /> Avaliar</Link>),
-    getItem('', '4', <Link to="/"><LogoutOutlined /> Login</Link>,),
+  const itemsUser = [
+    getItem('', '2', <Link to="/" onClick={() => { localStorage.clear() }}><LogoutOutlined /> Logout</Link>,),
   ];
 
   const itensAdmin = [
-    getItem('', '2', <Link to="/admin"><CommentOutlined /> Admin</Link>),
-    getItem('', '3', <Link to="/avaliar"><CommentOutlined /> Avaliar</Link>),
-    getItem('', '4', <Link to="/"><LogoutOutlined /> Logout</Link>,),
+    getItem('', '1', <Link to="/" onClick={() => { localStorage.clear() }}><LogoutOutlined /> Logout</Link>),
   ]
 
-  const itensUser = [
-    getItem('', '1', <Link to="/home"><HomeOutlined /> Home</Link>),
-    getItem('', '3', <Link to="/avaliar"><CommentOutlined /> Avaliar</Link>),
-    getItem('', '4', <Link to="/"><LogoutOutlined /> Logout</Link>,),
+  const itensLogin = [
+    getItem('', '1', <Link to="/avaliar"><CommentOutlined /> Avaliar</Link>),
   ]
-
 
   return (
     <Row>
@@ -56,7 +50,7 @@ const HeaderComponent = () => {
             >
               <Menu
                 mode="inline"
-                items={location.pathname !== '/' ? (location.pathname !== '/admin' ? itensUser : itensAdmin) : items}
+                items={location.pathname !== '/' ? (location.pathname !== '/admin' ? itemsUser : itensAdmin) : itensLogin}
               />
             </Drawer>
           )}
@@ -69,14 +63,14 @@ const HeaderComponent = () => {
             </div>
           </div>
           <div className="menuContent">
-            {location.pathname !== '/' && location.pathname !== '/avaliar' && (
-              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/">Sair</Link></Button>
+            {location.pathname === '/avaliar' && (
+              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/">Login</Link></Button>
             )}
-            {location.pathname !== '/home' && location.pathname !== '/avaliar' && (
-              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary"><Link to="/avaliar">Avaliar</Link></Button>
+            {(location.pathname === '/home' || location.pathname === '/admin') && (
+              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary" onClick={() => { localStorage.clear() }}><Link to="/">Logout</Link></Button>
             )}
-            {location.pathname !== '/' && location.pathname !== '/admin' && location.pathname !== '/home' && (
-              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary" onClick={() => { localStorage.clear() }}><Link to="/">Login</Link></Button>
+            {location.pathname === '/' && (
+              <Button style={{ width: '100px', marginLeft: '10px', backgroundColor: '#BF6900', color: 'white' }} type="primary" ><Link to="/avaliar">Avaliar</Link></Button>
             )}
           </div>
         </div>

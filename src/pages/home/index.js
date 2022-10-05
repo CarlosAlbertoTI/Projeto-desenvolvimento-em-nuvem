@@ -18,16 +18,26 @@ const Home = () => {
   const userData = JSON.parse(localStorage.getItem("user"));
 
   const getUserData = async () => {
+    // console.info("request");
     // console.info(userData);
+    // return
     const meusPatrimoniosRequest = await httpService.get(
-      "/bem?nome=" + userData.nome
+      "/bem", {
+      headers: {
+        Authorization: "Basic " + btoa(`${userData.nome}:${userData.senha}`),
+      }
+    }
     );
+
     const patrimoniosParaAvaliarRequest = await httpService.get("/bem", {
       headers: {
         Authorization: "Basic " + btoa("superuser:superuser"),
       },
     });
-    const filterPatrimoniosAvaliarRequest = patrimoniosParaAvaliarRequest.data.filter((patrimonio) => meusPatrimoniosRequest.data.includes(patrimonio) !== false)
+    const filterPatrimoniosAvaliarRequest = patrimoniosParaAvaliarRequest.data.filter((patrimonio) => patrimonio.usuarioId !== userData.codigoUsuario)
+    console.info("Lista patrimonios avaliar")
+    console.info(patrimoniosParaAvaliarRequest.data)
+    console.info(filterPatrimoniosAvaliarRequest)
     return {
       nome: userData.nome,
       meusPatrimonios: meusPatrimoniosRequest.data,

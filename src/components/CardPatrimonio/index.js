@@ -64,12 +64,11 @@ const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
         actions={
           hasUser
             ? [
-              <Badge count={countValidations}>
+              <Badge count={countValidations} onClick={() => {
+                setShowModalValidacao(true);
+              }}>
                 <CommentOutlined
                   key="comment"
-                  onClick={() => {
-                    setShowModalValidacao(true);
-                  }}
                 />
               </Badge>,
               <EditOutlined

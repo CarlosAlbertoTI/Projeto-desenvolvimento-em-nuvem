@@ -1,39 +1,70 @@
 import React, { useState } from "react";
 import { Button, Modal, Form, Input, Upload, message } from "antd";
-import { InboxOutlined } from "@ant-design/icons";
+import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import httpService from "../../service/http";
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
 
 const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
   const [loading, setLoading] = useState(false);
-  const props = {
-    name: "file",
-    multiple: false,
-    action: "http://54.145.67.182:8080/bem/addfiles",
-    // customRequest={() {}}
+  const [uploading, setUploading] = useState(false);
+  const [fileList, setFileList] = useState([]);
 
-    onChange(info) {
-      const { status } = info.file;
+  const handleUpload = async () => {
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append('files[]', file);
+    });
+    setUploading(true); // You can use any AJAX library you like
 
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
+    try {
+      await httpService.put("/bem/addfiles", formData, {
+        headers: {
 
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
-    },
+        }
+      })
+    } catch (error) {
+      message.error('upload failed.');
+      return;
+    }
+    setFileList([]);
+    message.success('upload successfully.');
+    // fetch('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
+    //   method: 'POST',
+    //   body: formData,
+    // })
+    //   .then((res) => res.json())
+    //   .then(() => {
+    //     setFileList([]);
+    //     message.success('upload successfully.');
+    //   })
+    //   .catch(() => {
+    //     message.error('upload failed.');
+    //   })
+    //   .finally(() => {
+    //     setUploading(false);
+    //   });
   };
+
+  const props = {
+    onRemove: (file) => {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
+    },
+    beforeUpload: (file) => {
+      setFileList([...fileList, file]);
+      return false;
+    },
+    fileList,
+  };
+
 
   const handleSuccessForm = (value) => {
     setLoading(true);
+    handleUpload();
     handleOk();
     setLoading(false);
   };
@@ -59,25 +90,15 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
             flexDirection: "column",
             justifyContent: "center",
           }}
-          onFinish={() => handleSuccessForm()}
+          onFinish={() => { handleSuccessForm() }}
         >
           <Form.Item
             name="files"
-            valuePropName="fileList"
             rules={[{ required: false, message: "Campo não pode ficar vazio" }]}
           >
-            <Dragger {...props}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">
-                Click or drag file to this area to upload
-              </p>
-              <p className="ant-upload-hint">
-                Support for a single or bulk upload. Strictly prohibit from
-                uploading company data or other band files
-              </p>
-            </Dragger>
+            <Upload {...props}>
+              <Button icon={<UploadOutlined />}>Select File</Button>
+            </Upload>
           </Form.Item>
           <Form.Item
             name="nome"

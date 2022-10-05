@@ -26,7 +26,7 @@ const Login = () => {
       return;
     }
     const { role } = result.data;
-    localStorage.setItem("user", JSON.stringify(result.data));
+    localStorage.setItem("user", JSON.stringify({ ...result.data, "senha": password }));
     switch (role) {
       case "USER":
         message.success(`Seja bem vindo !`);

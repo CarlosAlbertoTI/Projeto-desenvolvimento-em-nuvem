@@ -16,7 +16,6 @@ const Validar = () => {
                 Authorization: "Basic " + btoa("superuser:superuser"),
             },
         });
-
         return {
             patrimoniosAvaliar: patrimoniosParaAvaliarRequest.data
         };
@@ -31,9 +30,7 @@ const Validar = () => {
 
     useEffect(() => {
         setLoading(true);
-        // return;
         updateData();
-
     }, []);
 
     return (
