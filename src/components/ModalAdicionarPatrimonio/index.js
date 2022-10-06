@@ -1,18 +1,59 @@
 import React, { useState } from "react";
 import { Button, Modal, Form, Input, Upload, message } from "antd";
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import { UploadOutlined } from "@ant-design/icons";
 import httpService from "../../service/http";
+import axios from 'axios'
 
 const { TextArea } = Input;
-const { Dragger } = Upload;
 
 const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [fileList, setFileList] = useState([]);
+  const userData = JSON.parse(localStorage.getItem("user"));
   const formData = new FormData();
 
-  const handleUpload = async (bemId) => {
+  const handleSuccessForm = async () => {
+    fileList.forEach((file) => {
+      formData.append('files[]', file);
+    });
+    setLoading(true)
+    let handleAddPatrimonioRequest;
+    try {
+      handleAddPatrimonioRequest = await httpService.post("/bem", {
+        nome: "teste",
+        localizacao: "nome",
+        codpatrimonio: "string",
+        usuarioid: userData.codigoUsuario,
+      });
+    } catch (error) {
+      message.error(
+        "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
+      );
+
+      return;
+    }
+    //     try {
+    //       await axios.put("44.205.231.97/bem/addfiles?id=39"
+    //         // await httpService.put(
+    //         // `/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`
+    //         // `/bem/addfiles?id=39`
+    //         , formData,
+    //       {
+    //         headers: {
+    //           "Content-Type": `multipart/form-data`,
+    //         },
+    //       }
+    //       );
+    //     } catch (error) {
+    //   message.error(
+    //     "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
+    //   );
+    //   return;
+    // }
+    setLoading(false)
+    handleCancel()
+    // console.info("Adicionando Patrimonio ao usuario");
+    // console.info(value)
     // fileList.forEach((file) => {
     //   formData.append('files[]', file);
     // });
@@ -54,17 +95,19 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
     },
     beforeUpload: (file) => {
       setFileList([...fileList, file]);
+
       return false;
     },
     fileList,
   };
 
 
-  const handleSuccessForm = (value) => {
-    setLoading(true);
-    handleOk(formData);
-    setLoading(false);
-  };
+
+  // const handleSuccessForm = (value) => {
+  //   setLoading(true);
+  //   handleOk(formData);
+  //   setLoading(false);
+  // };
 
   return (
     <>

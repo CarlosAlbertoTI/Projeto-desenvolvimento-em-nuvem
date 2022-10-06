@@ -21,27 +21,28 @@ const Home = () => {
     // console.info("request");
     // console.info(userData);
     // return
-    const meusPatrimoniosRequest = await httpService.get(
-      "/bem", {
+    const meusPatrimoniosRequest = await httpService.get("/bem", {
       headers: {
         Authorization: "Basic " + btoa(`${userData.nome}:${userData.senha}`),
-      }
-    }
-    );
+      },
+    });
 
     const patrimoniosParaAvaliarRequest = await httpService.get("/bem", {
       headers: {
         Authorization: "Basic " + btoa("superuser:superuser"),
       },
     });
-    const filterPatrimoniosAvaliarRequest = patrimoniosParaAvaliarRequest.data.filter((patrimonio) => patrimonio.usuarioId !== userData.codigoUsuario)
-    console.info("Lista patrimonios avaliar")
-    console.info(patrimoniosParaAvaliarRequest.data)
-    console.info(filterPatrimoniosAvaliarRequest)
+    const filterPatrimoniosAvaliarRequest =
+      patrimoniosParaAvaliarRequest.data.filter(
+        (patrimonio) => patrimonio.usuarioId !== userData.codigoUsuario
+      );
+    console.info("Lista patrimonios avaliar");
+    console.info(patrimoniosParaAvaliarRequest.data);
+    console.info(filterPatrimoniosAvaliarRequest);
     return {
       nome: userData.nome,
       meusPatrimonios: meusPatrimoniosRequest.data,
-      patrimoniosAvaliar: filterPatrimoniosAvaliarRequest
+      patrimoniosAvaliar: filterPatrimoniosAvaliarRequest,
     };
   };
 
@@ -64,7 +65,6 @@ const Home = () => {
         codpatrimonio: "string",
         usuarioid: userData.codigoUsuario,
       });
-
     } catch (error) {
       message.error(
         "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
@@ -72,8 +72,17 @@ const Home = () => {
       setShowAddPatrimonioModal((oldValue) => !oldValue);
       return;
     }
+    console.info(value)
+    return;
     try {
-      await httpService.put(`/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`)
+      await httpService.put(
+        `/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`,value,
+        {
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${value._boundary}`,
+          },
+        }
+      );
     } catch (error) {
       message.error(
         "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
@@ -83,7 +92,7 @@ const Home = () => {
     }
     // console.info("Adicionando Patrimonio ao usuario");
     // console.info(value)
-    updateData()
+    updateData();
     setShowAddPatrimonioModal((oldValue) => !oldValue);
   };
 
@@ -91,21 +100,20 @@ const Home = () => {
     setLoading(true);
     // return;
     updateData();
-
   }, []);
 
   useEffect(() => {
     if (buscaPatrimonio !== "") {
-      setLoading(true)
+      setLoading(true);
       const novaListaMeusPatrimonios = listaDeMeusPatrimonios.filter((value) =>
         value.name.includes(buscaPatrimonio)
       );
       setListaDeMeusPatrimonios(novaListaMeusPatrimonios);
-      setLoading(false)
+      setLoading(false);
     } else {
-      setLoading(true)
+      setLoading(true);
       updateData();
-      setLoading(false)
+      setLoading(false);
     }
   }, [buscaPatrimonio]);
 
@@ -155,7 +163,12 @@ const Home = () => {
                 {listaDeMeusPatrimonios.length > 0 &&
                   listaDeMeusPatrimonios.map((value, index) => (
                     <>
-                      <CardPatrimonio key={index} hasUser={true} info={value} handleAction={updateData} />
+                      <CardPatrimonio
+                        key={index}
+                        hasUser={true}
+                        info={value}
+                        handleAction={updateData}
+                      />
                     </>
                   ))}
               </>
