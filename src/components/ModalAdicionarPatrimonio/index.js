@@ -14,12 +14,12 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
 
   const handleSuccessForm = async () => {
     fileList.forEach((file) => {
-      formData.append('files[]', file);
+      formData.append('file', file);
     });
     setLoading(true)
-    let handleAddPatrimonioRequest;
+    let response;
     try {
-      handleAddPatrimonioRequest = await httpService.post("/bem", {
+      response = await httpService.post("/bem", {
         nome: "teste",
         localizacao: "nome",
         codpatrimonio: "string",
@@ -32,24 +32,27 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
 
       return;
     }
-    //     try {
-    //       await axios.put("44.205.231.97/bem/addfiles?id=39"
-    //         // await httpService.put(
-    //         // `/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`
-    //         // `/bem/addfiles?id=39`
-    //         , formData,
-    //       {
-    //         headers: {
-    //           "Content-Type": `multipart/form-data`,
-    //         },
-    //       }
-    //       );
-    //     } catch (error) {
-    //   message.error(
-    //     "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
-    //   );
-    //   return;
-    // }
+    if(fileList != ""){
+      try {
+        await httpService.put("/bem/addfiles?id=" + response.data.idBem
+          , formData,
+        {
+          headers: {
+            "Content-Type": `multipart/form-data`,
+          },
+        }
+        );
+      } catch (error) {
+    message.error(
+      "Nao foi possível inserir o arquivo do bem, por favor tente mais tarde!"
+    );
+    return;
+  }
+    }
+
+      
+  
+
     setLoading(false)
     handleCancel()
     // console.info("Adicionando Patrimonio ao usuario");
