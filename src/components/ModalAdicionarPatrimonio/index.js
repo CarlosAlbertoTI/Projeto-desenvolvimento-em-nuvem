@@ -3,6 +3,7 @@ import { Button, Modal, Form, Input, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import httpService from "../../service/http";
 import axios from 'axios'
+import { useRef } from "react";
 
 const { TextArea } = Input;
 
@@ -11,8 +12,10 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
   const [fileList, setFileList] = useState([]);
   const userData = JSON.parse(localStorage.getItem("user"));
   const formData = new FormData();
+  const formref = useRef(null);
 
-  const handleSuccessForm = async () => {
+  const handleSuccessForm = async (values) => {
+    
     fileList.forEach((file) => {
       formData.append('file', file);
     });
@@ -20,8 +23,8 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
     let response;
     try {
       response = await httpService.post("/bem", {
-        nome: "teste",
-        localizacao: "nome",
+        nome: values.nome,
+        localizacao: values.descricao,
         codpatrimonio: "string",
         usuarioid: userData.codigoUsuario,
       });
@@ -55,38 +58,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
 
     setLoading(false)
     handleCancel()
-    // console.info("Adicionando Patrimonio ao usuario");
-    // console.info(value)
-    // fileList.forEach((file) => {
-    //   formData.append('files[]', file);
-    // });
-    // setUploading(true); // You can use any AJAX library you like
-
-    // try {
-    //   await httpService.put(`/bem/addfiles?id=${bemId}`, formData,)
-    // } catch (error) {
-    //   message.error('upload failed.');
-    //   setUploading(false);
-    //   return;
-    // }
-    // setFileList([]);
-    // message.success('upload successfully.');
-    // setUploading(false);
-    // fetch('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
-    //   method: 'POST',
-    //   body: formData,
-    // })
-    //   .then((res) => res.json())
-    //   .then(() => {
-    //     setFileList([]);
-    //     message.success('upload successfully.');
-    //   })
-    //   .catch(() => {
-    //     message.error('upload failed.');
-    //   })
-    //   .finally(() => {
-    //     setUploading(false);
-    //   });
+    
   };
 
   const props = {
@@ -128,12 +100,13 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
       >
         <Form
           layout="vertical"
+          ref={formref}
           style={{
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-          }}
-          onFinish={() => { handleSuccessForm() }}
+                      }}
+          onFinish= {handleSuccessForm}
         >
           <Form.Item
             name="files"
