@@ -7,8 +7,14 @@
 }
 
 .container_search_container{
-    width: 50%;
+    display:flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 90%;
     height: 50px;
+    margin-bottom: 50px;
 }
 
 .container .container_user_info{
@@ -20,7 +26,7 @@
 }
 
 .container .container_novos_patrimonios{
-    width: 90%;
+    width: 95%;
 }
 
 .container .container_novos_patrimonios h3{
@@ -28,10 +34,11 @@
 }
 
 .container .container_novos_patrimonios .container_cards{
+    margin: 30px 40px;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: flex-end;
 }
 

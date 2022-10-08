@@ -5,14 +5,14 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 
-const vetor = [1, 2, 3, 4];
-const LoadingCardPatrimonio = ({hasUser = false }) => {
+const vetor = [1, 2, 3];
+const LoadingCardPatrimonio = ({ hasUser = false }) => {
   return (
     <>
       {vetor.map((value, index) => (
-        
+
         <Card
-        key={index}
+          key={index}
           hoverable
           style={{ width: 240, marginBottom: "30px" }}
           cover={
@@ -24,7 +24,7 @@ const LoadingCardPatrimonio = ({hasUser = false }) => {
                 justifyContent: "center",
               }}
             >
-            {console.info(hasUser)}
+              {console.info(hasUser)}
               <Skeleton.Image style={{ width: "240px", height: "300px" }} />
               <Skeleton
                 active
@@ -35,10 +35,10 @@ const LoadingCardPatrimonio = ({hasUser = false }) => {
           actions={
             hasUser
               ? [
-                  <CommentOutlined key="comment" />,
-                  <EditOutlined key="edit" />,
-                  <DeleteOutlined key="delete" color="red" />,
-                ]
+                <CommentOutlined key="comment" />,
+                <EditOutlined key="edit" />,
+                <DeleteOutlined key="delete" color="red" />,
+              ]
               : [<CommentOutlined key="comment" />]
           }
         ></Card>

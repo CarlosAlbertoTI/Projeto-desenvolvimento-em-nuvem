@@ -1,20 +1,28 @@
 import { useState, useEffect } from "react";
-import { Button, message, Input, Empty } from "antd";
+import { Button, message, Input, Empty, Row, Col, Typography } from "antd";
 import Layout from "../../components/Layout/layout";
 import CardPatrimonio from "../../components/CardPatrimonio";
+import LoadingCardPatrimonio from "../../components/LoadingCardPatrimonio";
 import ModalAdicionarPatrimonio from "../../components/ModalAdicionarPatrimonio";
 import httpService from "../../service/http";
+
 import "./index.css";
-import LoadingCardPatrimonio from "../../components/LoadingCardPatrimonio";
+
+const { Title } = Typography;
 
 const Home = () => {
+
   const [loading, setLoading] = useState(false);
   const [showAddPatrimonioModal, setShowAddPatrimonioModal] = useState(false);
+
   const [nome, setNome] = useState("Usuário");
+
   const [buscaPatrimonio, setBuscaPatrimonio] = useState("");
+  const [buscaLocalizacaoPatrimonio, setBuscaLocalizacaoPatrimonio] = useState("");
+
   const [listaDeMeusPatrimonios, setListaDeMeusPatrimonios] = useState([]);
-  const [listaDePatrimoniosParaAvaliacao, setListaDePatrimoniosParaAvaliacao] =
-    useState([]);
+  const [listaDePatrimoniosParaAvaliacao, setListaDePatrimoniosParaAvaliacao] = useState([]);
+
   const userData = JSON.parse(localStorage.getItem("user"));
 
   const getUserData = async () => {
@@ -36,9 +44,9 @@ const Home = () => {
       patrimoniosParaAvaliarRequest.data.filter(
         (patrimonio) => patrimonio.usuarioId !== userData.codigoUsuario
       );
-    console.info("Lista patrimonios avaliar");
-    console.info(patrimoniosParaAvaliarRequest.data);
-    console.info(filterPatrimoniosAvaliarRequest);
+    // console.info("Lista patrimonios avaliar");
+    // console.info(patrimoniosParaAvaliarRequest.data);
+    // console.info(filterPatrimoniosAvaliarRequest);
     return {
       nome: userData.nome,
       meusPatrimonios: meusPatrimoniosRequest.data,
@@ -48,12 +56,11 @@ const Home = () => {
 
   const updateData = async () => {
     const { nome, meusPatrimonios, patrimoniosAvaliar } = await getUserData();
-    console.info("MEUS avaliar");
-    console.info(patrimoniosAvaliar);
+    // console.info("MEUS avaliar");
+    // console.info(patrimoniosAvaliar);
     setNome(nome);
     setListaDeMeusPatrimonios(meusPatrimonios);
     setListaDePatrimoniosParaAvaliacao(patrimoniosAvaliar);
-    setLoading(false);
   };
 
   const handleShowAddPatrimonioModal = async (value) => {
@@ -72,11 +79,9 @@ const Home = () => {
       setShowAddPatrimonioModal((oldValue) => !oldValue);
       return;
     }
-    console.info(value)
-    return;
     try {
       await httpService.put(
-        `/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`,value,
+        `/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`, value,
         {
           headers: {
             "Content-Type": `multipart/form-data; boundary=${value._boundary}`,
@@ -98,8 +103,8 @@ const Home = () => {
 
   useEffect(() => {
     setLoading(true);
-    // return;
     updateData();
+    setLoading(false)
   }, []);
 
   useEffect(() => {
@@ -117,19 +122,29 @@ const Home = () => {
     }
   }, [buscaPatrimonio]);
 
+
+  useEffect(() => {
+    if (buscaLocalizacaoPatrimonio !== "") {
+      setLoading(true);
+      const novaListaMeusPatrimonios = listaDeMeusPatrimonios.filter((value) =>
+        value.localizacao.includes(buscaLocalizacaoPatrimonio)
+      );
+      setListaDeMeusPatrimonios(novaListaMeusPatrimonios);
+      setLoading(false);
+    } else {
+      setLoading(true);
+      updateData();
+      setLoading(false);
+    }
+  }, [buscaLocalizacaoPatrimonio]);
+
   return (
     <Layout>
       <div className="container">
         <div className="container_user_info">
-          <h1>
+          <Title level={2}>
             Seja bem vindo <b>{nome}</b>
-          </h1>
-        </div>
-        <div className="container_search_container">
-          <Input
-            placeholder="Busque por algum dos seus patrimonios aqui"
-            onChange={(newValue) => setBuscaPatrimonio(newValue.target.value)}
-          />
+          </Title>
         </div>
         <div className="container_user_info">
           {showAddPatrimonioModal && (
@@ -152,8 +167,30 @@ const Home = () => {
             Adicionar Patrimonio
           </Button>
         </div>
+        <Row className="container_search_container">
+          <Col span={11} style={{ display: 'flex', flexDirection: 'column', height: '115px' }}>
+            <Title level={4}>Busca por titulo</Title>
+            <Input
+              size="large"
+              placeholder="Digite aqui o nome do patrimonio"
+              onChange={(newValue) => setBuscaPatrimonio(newValue.target.value)}
+            />
+          </Col>
+          <Col span={11} style={{ display: 'flex', flexDirection: 'column', height: '115px' }}>
+            <Title level={4} style={{ width: '200px' }}>Busca por localização</Title>
+            <div style={{ display: 'flex' }}>
+              <Input
+                size="large"
+                placeholder="Digite aqui a localização do patrimonio"
+                onChange={(newValue) => setBuscaLocalizacaoPatrimonio(newValue.target.value)}
+              />
+            </div>
+          </Col>
+        </Row>
+
+
         <div className="container_novos_patrimonios">
-          <h3>Meus Patrimonios</h3>
+          <Title level={3}>Meus Patrimonios</Title>
           <div className="container_cards">
             {!loading && (
               <>
@@ -177,7 +214,7 @@ const Home = () => {
           </div>
         </div>
         <div className="container_novos_patrimonios">
-          <h3>Bens para avaliação</h3>
+          <Title level={3}>Bens para avaliação</Title>
           <div className="container_cards">
             {!loading && (
               <>
@@ -186,7 +223,15 @@ const Home = () => {
                 )}
                 {listaDePatrimoniosParaAvaliacao.length > 0 &&
                   listaDePatrimoniosParaAvaliacao.map((value, index) => (
-                    <CardPatrimonio key={index} hasUser={false} info={value} />
+                    <>
+                      <CardPatrimonio
+                        className="container_cars"
+                        key={index}
+                        hasUser={true}
+                        info={value}
+                        handleAction={updateData}
+                      />
+                    </>
                   ))}
               </>
             )}

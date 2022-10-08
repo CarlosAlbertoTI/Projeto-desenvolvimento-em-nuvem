@@ -13,51 +13,63 @@ const Login = () => {
 
   const loginService = async (value) => {
     setLoading(true);
+    //! Para testes
+    //! return setTimeout(() => {
+    //!   message.info(`Seja Bem vindo ${value.username}`, 2);
+    //!   setLoading(false)
+    //!   return navigate('/home')
+    //! }, 5000)
+
     const { username, password } = value;
-    setLoading(true);
     let result;
     try {
       result = await httpService.get("/user/me", {
-        headers: { Authorization: "Basic " + btoa(username + ":" + password) },
+        headers: { Authorization: "Basic " + btoa(`${username}:${password}`) },
       });
     } catch (error) {
       setLoading(false);
-      message.error("Email e senha não valido!");
+      message.error("Email e senha não valido!", 1);
       return;
     }
     const { role } = result.data;
     localStorage.setItem("user", JSON.stringify({ ...result.data, "senha": password }));
     switch (role) {
       case "USER":
-        message.success(`Seja bem vindo !`);
+        message.success(`Seja bem vinda(o) ${username}!`, 2)
         navigate("/home");
         break;
       case "ROOT":
-        message.success(`Seja bem vindo !`);
+        message.success(`Seja bem vinda(o) ${username}!`, 2)
         navigate("/admin");
         break;
 
       default:
-        message.error("Erro no login, por favor tente mais tarde");
+        message.error("Erro no login, por favor tente mais tarde", 5);
         break;
     }
-    // message.success(`Seja bem vindo !`)
-    // return navigate('/home')
+    setLoading(false)
   };
 
   const loginServiceFailure = (errorInfo) => {
-    return message.error("Preencha todos os campos");
+    return message.error("Preencha todos os campos", 1);
   };
 
   const cadastroService = async ({ username, email, password }) => {
-    setLoading(true);
+
+    //! Para testes
+    //! setLoading(true);
+    //! setTimeout(() => {
+    //!   setSwitchControl((oldValue) => !oldValue);
+    //!   setLoading(false)
+    //! }, 5000)
+
     if (!email.includes("@")) {
       setLoading(false);
-      return message.error("Email não valido!");
+      return message.error("Email não valido!", 2);
     }
     if (password.length < 5) {
       setLoading(false);
-      return message.error("Senha precisa ter pelo menos 5 caracteres");
+      return message.error("Senha precisa ter pelo menos 5 caracteres", 2);
     }
     const newUser = {
       email: email,
@@ -65,9 +77,9 @@ const Login = () => {
       name: username,
       senha: password,
     };
-    let result;
+
     try {
-      result = await httpService.post("/user", newUser, {
+      await httpService.post("/user", newUser, {
         headers: {
           accept: "*/*",
           "Content-Type": "application/json",
@@ -76,18 +88,15 @@ const Login = () => {
       });
     } catch (error) {
       setLoading(false);
-      message.error(
-        "Não foi possivel se cadastrar no sistema, por favor tente mais tarde"
-      );
+      message.error("Não foi possivel se cadastrar no sistema, por favor tente mais tarde", 5);
       return;
     }
     setLoading(false);
     setSwitchControl((oldValue) => !oldValue);
-    // return navigate('/home')
   };
 
   const cadastroServiceFailure = () => {
-    return message.error("Preencha todos os campos");
+    return message.error("Preencha todos os campos", 1);
   };
 
   return (
@@ -100,7 +109,6 @@ const Login = () => {
           style={{
             marginTop: "10vh",
             marginBottom: "10vh",
-            height: "72vh",
             display: "flex",
             justifyContent: "center",
           }}
@@ -118,7 +126,7 @@ const Login = () => {
                 style={{ width: "110px" }}
                 checkedChildren="Login"
                 unCheckedChildren="Se Registrar"
-                checked={switchControl}
+                checked={!switchControl}
                 onClick={handleSwitchControl}
               />
             }

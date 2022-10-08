@@ -1,0 +1,20 @@
+.menuContent {
+    background-color: #f7f9f9 !important;
+    width: 100%;
+    max-width: 450px;
+    margin-right: 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+  
+  .mobile-btn-menu {
+    display: none;
+  }
+  
+  .cardContainer {
+    min-width: 190px;
+    width: 400px;
+  }
+  
+  

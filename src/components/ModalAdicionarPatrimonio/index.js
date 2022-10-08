@@ -2,56 +2,44 @@ import React, { useState } from "react";
 import { Button, Modal, Form, Input, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import httpService from "../../service/http";
-import axios from 'axios'
-
-const { TextArea } = Input;
 
 const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState([]);
+  const [fileList, setFileList] = useState();
   const userData = JSON.parse(localStorage.getItem("user"));
   const formData = new FormData();
 
-  const handleSuccessForm = async () => {
-    fileList.forEach((file) => {
-      formData.append('files[]', file);
-    });
+  const handleSuccessForm = async (value) => {
+    formData.append('file', fileList);
+
+
     setLoading(true)
     let handleAddPatrimonioRequest;
     try {
+
       handleAddPatrimonioRequest = await httpService.post("/bem", {
-        nome: "teste",
-        localizacao: "nome",
-        codpatrimonio: "string",
+        nome: value.nome,
+        localizacao: value.descricao,
         usuarioid: userData.codigoUsuario,
       });
-    } catch (error) {
-      message.error(
-        "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
+
+      await httpService.put(`/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`
+        , formData,
+        {
+          headers: {
+            "Authorization": "Basic " + btoa("misasnovo:misas"),
+            "Content-Type": `multipart/form-data`
+          },
+        }
       );
 
-      return;
+    } catch (error) {
+      message.error(
+        "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!", 5);
     }
-    //     try {
-    //       await axios.put("44.205.231.97/bem/addfiles?id=39"
-    //         // await httpService.put(
-    //         // `/bem/addfiles?id=${handleAddPatrimonioRequest.data.idBem}`
-    //         // `/bem/addfiles?id=39`
-    //         , formData,
-    //       {
-    //         headers: {
-    //           "Content-Type": `multipart/form-data`,
-    //         },
-    //       }
-    //       );
-    //     } catch (error) {
-    //   message.error(
-    //     "Não foi possivel adicionar um patrimonio, por favor tente mais tarde!"
-    //   );
-    //   return;
-    // }
     setLoading(false)
     handleCancel()
+    return
     // console.info("Adicionando Patrimonio ao usuario");
     // console.info(value)
     // fileList.forEach((file) => {
@@ -130,7 +118,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
             flexDirection: "column",
             justifyContent: "center",
           }}
-          onFinish={() => { handleSuccessForm() }}
+          onFinish={handleSuccessForm}
         >
           <Form.Item
             name="files"
@@ -149,10 +137,10 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
           </Form.Item>
           <Form.Item
             name="descricao"
-            label="Descrição"
+            label="Localização"
             rules={[{ required: true, message: "Campo não pode ficar vazio" }]}
           >
-            <TextArea rows={4} />
+            <Input />
           </Form.Item>
           <Form.Item wrapperCol={{ span: 20 }}>
             <Button type="primary" loading={loading} htmlType="submit">

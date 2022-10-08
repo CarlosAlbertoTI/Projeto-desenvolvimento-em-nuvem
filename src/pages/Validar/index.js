@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react'
+import { Typography } from "antd";
 import Layout from "../../components/Layout/layout";
 import CardPatrimonio from "../../components/CardPatrimonio";
 import LoadingCardPatrimonio from "../../components/LoadingCardPatrimonio";
 import httpService from "../../service/http";
 import "./index.css";
+
+const { Title } = Typography;
 
 const Validar = () => {
     const [loading, setLoading] = useState(false);
@@ -31,13 +34,14 @@ const Validar = () => {
     useEffect(() => {
         setLoading(true);
         updateData();
+        setLoading(false)
     }, []);
 
     return (
         <Layout>
             <div className="container">
                 <div className="container_novos_patrimonios" style={{ margin: '20px' }}>
-                    <h3>Bens para avaliação</h3>
+                    <Title level={4}>Bens para avaliação</Title>
                     <div className="container_cards">
                         {!loading && (
                             <>

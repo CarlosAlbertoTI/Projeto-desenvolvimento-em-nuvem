@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Card, Image, Popconfirm, message, Badge } from "antd";
+import { Card, Image, Popconfirm, message, Badge, Empty, Typography } from "antd";
 import {
   EditOutlined,
   DeleteOutlined,
@@ -8,10 +8,14 @@ import {
 import ModalValidacao from "../ModalValidacao";
 import ModalAlterarDadosPatrimonio from "../ModalEditarPatrimonio";
 import httpService from "../../service/http";
+
+import './style.css'
+
 const { Meta } = Card;
+const { Text } = Typography;
+
 
 const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
-  const { nome, descricao, photoUrl } = info;
   const [showModalValidacao, setShowModalValidacao] = useState(false);
   const [countValidations, setCountValidation] = useState(0);
   const [showModalEditar, setShowModalEditar] = useState(false);
@@ -58,9 +62,37 @@ const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
         handleCancelModal={() => setShowModalEditar(false)}
       />
       <Card
+        id="cardPatrimonio"
         hoverable
-        style={{ width: 240, marginBottom: "30px" }}
-        cover={<Image src={info.bemUrl} />}
+        cover={
+          <>
+            {info.bemUrl !== null && (
+              <Image style={{
+                borderRadius: '20px 20px 0 0',
+                border: '5px solid #BF6900',
+                height: '300px',
+              }} src={info.bemUrl} />
+            )}
+            {info.bemUrl === null && (
+              <Empty
+                style={{
+                  borderRadius: '20px 20px 0 0',
+                  border: '5px solid #BF6900',
+                  paddingTop: '50px',
+                  margin: '0 auto',
+                  height: '300px'
+                }}
+                description={
+                  <span>
+                    Bem cadastrado sem arquivo, ou arquivo não carregado
+                  </span>
+                }
+              >
+              </Empty>
+            )}
+
+          </>
+        }
         actions={
           hasUser
             ? [
@@ -96,8 +128,18 @@ const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
             ]
         }
       >
-        <Meta title={info.name} description={info.localizacao} />
-      </Card>
+
+
+        <Meta style={{
+          height: '90px'
+        }} title={
+          <Text>{info.name}</Text>
+        }
+          description={
+            <Text type="secondary">{info.localizacao}</Text>
+          }
+        />
+      </Card >
     </>
   );
 };
