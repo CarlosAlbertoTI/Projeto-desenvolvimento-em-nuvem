@@ -16,8 +16,8 @@ const { Text } = Typography;
 
 
 const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
-  const [showModalValidacao, setShowModalValidacao] = useState(false);
   const [countValidations, setCountValidation] = useState(0);
+  const [showModalValidacao, setShowModalValidacao] = useState(false);
   const [showModalEditar, setShowModalEditar] = useState(false);
 
   const handleDeletePatrimonio = async () => {
@@ -29,8 +29,8 @@ const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
       );
       return;
     }
-    handleAction()
     message.success("Patrimonio deletado com sucesso!");
+    return handleAction()
   };
 
   const handleCountValidations = async () => {
@@ -49,12 +49,15 @@ const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
 
   return (
     <>
-      <ModalValidacao
-        open={showModalValidacao}
-        info={info}
-        handleAction={handleAction}
-        handleCancel={() => setShowModalValidacao(false)}
-      />
+      {showModalValidacao && (
+        <ModalValidacao
+          open={showModalValidacao}
+          info={info}
+          handleAction={handleAction}
+          handleCancel={() => { setShowModalValidacao(false) }}
+        />
+      )}
+
       <ModalAlterarDadosPatrimonio
         open={showModalEditar}
         info={info}
@@ -131,7 +134,7 @@ const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
 
 
         <Meta style={{
-          height: '90px'
+          height: '83px'
         }} title={
           <Text>{info.name}</Text>
         }

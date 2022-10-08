@@ -24,15 +24,18 @@ const ModalAlterarDadosPatrimonio = ({
   const [previewTitle, setPreviewTitle] = useState("");
   const [fileList, setFileList] = useState([
     {
-      uid: "-4",
-      name: "image.png",
+      usuarioId: info.usuarioId,
+      idBem: info.idBem,
+      name: info.name,
+      dirImagemBem: info.dirImagemBem,
+      localizacao: info.localizacao,
       status: "done",
-      url: "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png",
+      url: info.bemUrl,
     },
   ]);
+  const formData = new FormData()
 
   const handleCancel = () => setPreviewOpen(false);
-  const handleChange = ({ fileList: newFileList }) => setFileList(newFileList);
 
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -48,18 +51,31 @@ const ModalAlterarDadosPatrimonio = ({
 
   const handleSuccess = async (value) => {
     setLoading(true)
-    // console.info(value)
-    // console.info(info)
-    // console.info({
-    //   "name": value.name, "localizacao": value.localizacao, "codbem": info.idBem
-    // })
-    // return;
     try {
       await httpService.put("/bem", {
         "nome": value.name, "localizacao": value.localizacao, "codbem": info.idBem
       })
+
+      fileList.forEach((file) => {
+        formData.append('file', file)
+      })
+      await httpService.put(
+        `/bem/addfiles?id=${info.idBem}`, formData,
+        {
+          headers: {
+            "Content-Type": `multipart/form-data; boundary=${value._boundary}`,
+          },
+        }
+      );
+
+
     } catch (error) {
       setLoading(false)
+      console.info(error)
+      // console.info(error.config.url.includes('/bem/addfiles?id='))
+      // if (error.config.url.includes('/bem/addfiles?id=')) {
+      // return message.error("Houve um erro para editar esse patrimonio, por favor tente mais tarde!")
+      // }
       return message.error("Houve um erro para editar esse patrimonio, por favor tente mais tarde!")
     }
     setLoading(false)
@@ -74,6 +90,21 @@ const ModalAlterarDadosPatrimonio = ({
       <div style={{ marginTop: 8 }}>Upload</div>
     </div>
   );
+
+  const props = {
+    onRemove: (file) => {
+      const index = fileList.indexOf(file);
+      const newFileList = fileList.slice();
+      newFileList.splice(index, 1);
+      setFileList(newFileList);
+    },
+    beforeUpload: (file) => {
+      console.info(file)
+      setFileList([...fileList, file]);
+      return false;
+    },
+    fileList,
+  };
 
   return (
     <>
@@ -97,14 +128,13 @@ const ModalAlterarDadosPatrimonio = ({
           initialValues={{ ...info }}
           onFinish={handleSuccess}
         >
-          <Form.Item valuePropName="fileList">
+          <Form.Item label="Envie seu arquivo aqui. (Apenas em formato pdf,jpg e png)" valuePropName="fileList">
             <>
               <Upload
-                // action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
                 listType="picture-card"
                 fileList={fileList}
                 onPreview={handlePreview}
-                onChange={handleChange}
+                {...props}
               >
                 {fileList.length >= 8 ? null : uploadButton}
               </Upload>

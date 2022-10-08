@@ -22,10 +22,10 @@ const AdminPage = () => {
     let userList;
     try {
       userList = await httpService.get("/user", {
-        headers: { Authorization: `Basic ${btoa("rootnovo:root123")}` },
+        headers: { Authorization: `Basic ${btoa("superuser:superuser")}` },
       })
     } catch (error) {
-      message.error("Erro ao carregar informações do usuário, por favor tente mais tarde!");
+      message.error("Erro ao carregar a lista de usuários, por favor tente mais tarde!");
       return;
     }
 

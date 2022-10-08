@@ -5,13 +5,14 @@ import httpService from "../../service/http";
 
 const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
   const [loading, setLoading] = useState(false);
-  const [fileList, setFileList] = useState();
+  const [fileList, setFileList] = useState([]);
   const userData = JSON.parse(localStorage.getItem("user"));
   const formData = new FormData();
 
   const handleSuccessForm = async (value) => {
-    formData.append('file', fileList);
-
+    fileList.forEach(file => {
+      formData.append('file', file);
+    });
 
     setLoading(true)
     let handleAddPatrimonioRequest;
@@ -28,7 +29,10 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
         {
           headers: {
             "Authorization": "Basic " + btoa("misasnovo:misas"),
-            "Content-Type": `multipart/form-data`
+            "Content-Type": `multipart/form-data`,
+            "Content-Disposition": "file",
+            "Content-Transfer-Encoding": "binary",
+            "type": "formData"
           },
         }
       );
@@ -40,38 +44,6 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
     setLoading(false)
     handleCancel()
     return
-    // console.info("Adicionando Patrimonio ao usuario");
-    // console.info(value)
-    // fileList.forEach((file) => {
-    //   formData.append('files[]', file);
-    // });
-    // setUploading(true); // You can use any AJAX library you like
-
-    // try {
-    //   await httpService.put(`/bem/addfiles?id=${bemId}`, formData,)
-    // } catch (error) {
-    //   message.error('upload failed.');
-    //   setUploading(false);
-    //   return;
-    // }
-    // setFileList([]);
-    // message.success('upload successfully.');
-    // setUploading(false);
-    // fetch('https://www.mocky.io/v2/5cc8019d300000980a055e76', {
-    //   method: 'POST',
-    //   body: formData,
-    // })
-    //   .then((res) => res.json())
-    //   .then(() => {
-    //     setFileList([]);
-    //     message.success('upload successfully.');
-    //   })
-    //   .catch(() => {
-    //     message.error('upload failed.');
-    //   })
-    //   .finally(() => {
-    //     setUploading(false);
-    //   });
   };
 
   const props = {
@@ -122,6 +94,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
         >
           <Form.Item
             name="files"
+            label="Envie seu arquivo aqui. (Apenas em formato pdf, jpg e png)"
             rules={[{ required: false, message: "Campo não pode ficar vazio" }]}
           >
             <Upload {...props}>

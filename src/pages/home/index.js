@@ -26,9 +26,6 @@ const Home = () => {
   const userData = JSON.parse(localStorage.getItem("user"));
 
   const getUserData = async () => {
-    // console.info("request");
-    // console.info(userData);
-    // return
     const meusPatrimoniosRequest = await httpService.get("/bem", {
       headers: {
         Authorization: "Basic " + btoa(`${userData.nome}:${userData.senha}`),
@@ -44,9 +41,6 @@ const Home = () => {
       patrimoniosParaAvaliarRequest.data.filter(
         (patrimonio) => patrimonio.usuarioId !== userData.codigoUsuario
       );
-    // console.info("Lista patrimonios avaliar");
-    // console.info(patrimoniosParaAvaliarRequest.data);
-    // console.info(filterPatrimoniosAvaliarRequest);
     return {
       nome: userData.nome,
       meusPatrimonios: meusPatrimoniosRequest.data,
@@ -56,8 +50,6 @@ const Home = () => {
 
   const updateData = async () => {
     const { nome, meusPatrimonios, patrimoniosAvaliar } = await getUserData();
-    // console.info("MEUS avaliar");
-    // console.info(patrimoniosAvaliar);
     setNome(nome);
     setListaDeMeusPatrimonios(meusPatrimonios);
     setListaDePatrimoniosParaAvaliacao(patrimoniosAvaliar);
@@ -104,6 +96,7 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     updateData();
+    console.info("ASDHASKJDHASKJDHSA")
     setLoading(false)
   }, []);
 
@@ -204,7 +197,7 @@ const Home = () => {
                         key={index}
                         hasUser={true}
                         info={value}
-                        handleAction={updateData}
+                        handleAction={() => updateData()}
                       />
                     </>
                   ))}
@@ -227,7 +220,7 @@ const Home = () => {
                       <CardPatrimonio
                         className="container_cars"
                         key={index}
-                        hasUser={true}
+                        hasUser={false}
                         info={value}
                         handleAction={updateData}
                       />

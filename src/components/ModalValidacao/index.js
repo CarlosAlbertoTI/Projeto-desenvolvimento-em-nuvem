@@ -23,7 +23,7 @@ const ModalValidacao = ({ open, handleAction, handleCancel, info }, key) => {
         setLoading(false)
         message.success("Validação feita com sucesso!")
         handleAction()
-        handleCancel()
+        return handleCancel()
     }
 
     return (
