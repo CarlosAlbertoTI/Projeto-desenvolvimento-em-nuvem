@@ -99,13 +99,6 @@ const CardPatrimonio = ({ hasUser = false, info = {}, handleAction }, key) => {
         actions={
           hasUser
             ? [
-              <Badge count={countValidations} onClick={() => {
-                setShowModalValidacao(true);
-              }}>
-                <CommentOutlined
-                  key="comment"
-                />
-              </Badge>,
               <EditOutlined
                 key="edit"
                 onClick={() => setShowModalEditar(true)}

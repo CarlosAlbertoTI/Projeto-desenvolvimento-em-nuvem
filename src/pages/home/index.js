@@ -206,31 +206,6 @@ const Home = () => {
             {loading && <LoadingCardPatrimonio hasUser={true} />}
           </div>
         </div>
-        <div className="container_novos_patrimonios">
-          <Title level={3}>Bens para avaliação</Title>
-          <div className="container_cards">
-            {!loading && (
-              <>
-                {listaDePatrimoniosParaAvaliacao.length === 0 && (
-                  <Empty style={{ margin: "20px auto" }} />
-                )}
-                {listaDePatrimoniosParaAvaliacao.length > 0 &&
-                  listaDePatrimoniosParaAvaliacao.map((value, index) => (
-                    <>
-                      <CardPatrimonio
-                        className="container_cars"
-                        key={index}
-                        hasUser={false}
-                        info={value}
-                        handleAction={updateData}
-                      />
-                    </>
-                  ))}
-              </>
-            )}
-            {loading && <LoadingCardPatrimonio />}
-          </div>
-        </div>
       </div>
     </Layout>
   );
