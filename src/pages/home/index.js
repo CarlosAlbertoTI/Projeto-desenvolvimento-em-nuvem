@@ -94,11 +94,14 @@ const Home = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
+  
     updateData();
-    console.info("ASDHASKJDHASKJDHSA")
-    setLoading(false)
   }, []);
+
+  useEffect(() => {
+    updateData();
+  }, [showAddPatrimonioModal]);
+
 
   useEffect(() => {
     if (buscaPatrimonio !== "") {
@@ -129,7 +132,7 @@ const Home = () => {
       updateData();
       setLoading(false);
     }
-  }, [buscaLocalizacaoPatrimonio]);
+  }, [buscaLocalizacaoPatrimonio  ]);
 
   return (
     <Layout>
