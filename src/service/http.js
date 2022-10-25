@@ -1,6 +1,9 @@
 import axios from "axios";
+
+let backend_ip = process.env.BACKEND_IP
+console.log.log(backend_ip)
 const apiInstance = axios.create({
-    baseURL: 'http://44.205.231.97:8080',
+    baseURL: backend_ip=!null?backend_ip:'http://44.205.231.97:8080',
     withCredentials: false,
     headers: {
         'Content-Type': 'application/json',
