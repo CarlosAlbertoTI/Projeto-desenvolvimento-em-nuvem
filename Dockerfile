@@ -1,8 +1,9 @@
-FROM node:alpine AS frontend
-WORKDIR /usr/src/app
+FROM node:16-alpine AS frontend
+
+WORKDIR /usr/src/react-app
 
 COPY package*.json ./
 RUN npm install
-COPY . .
-EXPOSE 9000
+COPY ./src ./src
+COPY ./public ./public
 ENTRYPOINT [ "npm","start" ]
