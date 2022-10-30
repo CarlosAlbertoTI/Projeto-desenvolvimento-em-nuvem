@@ -4,8 +4,8 @@ const apiInstance = axios.create({
     withCredentials: false,
     headers: {
         'Content-Type': 'application/json',
-    },
-    timeout: 1000000
+        'Access-Control-Allow-Origin':'*'},
+    timeout: 1000000,
 });
 
 export default apiInstance
