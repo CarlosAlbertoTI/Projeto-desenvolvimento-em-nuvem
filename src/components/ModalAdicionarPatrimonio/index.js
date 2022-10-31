@@ -9,6 +9,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
   const userData = JSON.parse(localStorage.getItem("user"));
   const formData = new FormData();
 
+  
   const handleSuccessForm = async (value) => {
     fileList.forEach(file => {
       formData.append('file', file);
@@ -28,7 +29,7 @@ const ModalAdicionarPatrimonio = ({ open, handleOk, handleCancel }, key) => {
         , formData,
         {
           headers: {
-            "Authorization": "Basic " + btoa("misasnovo:misas"),
+            "Authorization": "Basic " + btoa(`${userData.nome}:${userData.senha}`),
             "Content-Type": `multipart/form-data`,
             "Content-Disposition": "file",
             "Content-Transfer-Encoding": "binary",
