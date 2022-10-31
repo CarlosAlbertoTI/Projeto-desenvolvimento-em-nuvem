@@ -15,9 +15,9 @@ const Validar = () => {
     const getUserData = async () => {
 
         const patrimoniosParaAvaliarRequest = await httpService.get("/bem", {
-            headers: {
-                Authorization: "Basic " + btoa("superuser:superuser"),
-            },
+            headers:{
+                'Access-Control-Allow-Origin':'*'
+            }
         });
         return {
             patrimoniosAvaliar: patrimoniosParaAvaliarRequest.data

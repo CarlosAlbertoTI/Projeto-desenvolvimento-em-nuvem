@@ -29,6 +29,7 @@ const Home = () => {
     const meusPatrimoniosRequest = await httpService.get("/bem", {
       headers: {
         Authorization: "Basic " + btoa(`${userData.nome}:${userData.senha}`),
+        'Access-Control-Allow-Origin':'*'
       },
     });
 
