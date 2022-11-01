@@ -35,7 +35,7 @@ const Home = () => {
 
     const patrimoniosParaAvaliarRequest = await httpService.get("/bem", {
       headers: {
-        Authorization: "Basic " + btoa("superuser:superuser"),
+        'Access-Control-Allow-Origin':'*'
       },
     });
     const filterPatrimoniosAvaliarRequest =
